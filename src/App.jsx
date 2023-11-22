@@ -16,6 +16,7 @@ import EditarCliente from './views/clientes/EditarCliente'
 import EditarTienda from './views/tiendas/EditarTienda'
 import NuevoRegistro from './views/reposiciones/NuevoRegistro'
 import Insumos from './views/insumos/Insumos'
+import NuevoProducto from './views/productos/NuevoProducto'
 
 function App() {
   
@@ -42,6 +43,7 @@ function App() {
       
       
       <Route path='/productos' element={<Productos/>}/>
+      <Route path='/nuevoproducto' element={<NuevoProducto/>}/>
       
       
       <Route path='/producciones' element={<Producciones/>}/>
