@@ -16,6 +16,7 @@
     "postcss": "^8.4.31",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.12.0",
     "react-paginate": "^8.2.0",
     "react-router-dom": "^6.17.0",
     "react-select": "^5.8.0",

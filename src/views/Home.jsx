@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import ClienteTiendaDetail from './clientes/ClienteTiendaDetail';
 import EditarCliente from './clientes/EditarCliente';
+import { FaEdit } from 'react-icons/fa';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -21,13 +22,13 @@ const Home = () => {
           'x-auth-token': token,
         },
       });
-  
+
       if (!response.ok) {
         throw new Error('Error al obtener los datos');
       }
-  
+
       const data = await response.json();
-  
+
       if (data.docs && data.docs.length > 0 && data.docs[0]._id) {
         setClientes({ docs: data.docs, totalDocs: data.totalDocs, limit: data.limit });
       } else {
@@ -122,15 +123,14 @@ const Home = () => {
                   </Link>
                 </td>
                 <td className="border px-4 py-2">
-                  <Link
-                    to={`/editarcliente/${cliente._id}`}
+                  <button
                     onClick={() => {
                       handleEditarClienteClick(cliente._id);
                     }}
                     className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
                   >
-                    Editar
-                  </Link>
+                    <FaEdit />
+                  </button>
                 </td>
               </tr>
             ))}

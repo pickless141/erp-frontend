@@ -11,8 +11,11 @@ const NuevoPedido = () => {
   const [productosOptions, setProductosOptions] = useState([]);
   const [tienda, setTienda] = useState(null);
   const [productos, setProductos] = useState([]);
-  const [mensaje, setMensaje] = useState(null);
   const navigate = useNavigate();
+
+  const [exito, setExito] = useState(null);
+  const [error, setError] = useState(null);
+
 
   useEffect(() => {
     const obtenerDatos = async () => {
@@ -33,7 +36,7 @@ const NuevoPedido = () => {
         });
         const productos = response.data.map(producto => ({
           value: producto._id,
-          label: `${producto.nombreProducto} - Existencia: ${producto.existencia}`,
+          label: `${producto.nombreProducto}`,
           precio: producto.precio,
           cantidad: 0,
         }));
@@ -83,13 +86,13 @@ const NuevoPedido = () => {
         }
       );
 
-      setMensaje({ texto: 'Pedido creado exitosamente' });
+      setExito('Pedido creado exitosamente');
 
       setTimeout(() => {
         navigate('/pedidos');
       }, 2000);
     } catch (error) {
-      setMensaje({ texto: 'Error al crear un nuevo pedido', color: 'red' });
+      setError('Error al crear el pedido');
       console.log(error);
     }
   };
@@ -99,7 +102,16 @@ const NuevoPedido = () => {
       <div className="max-w-md mx-auto">
         <h1 className="text-2xl text-gray-800 font-light mb-4">Nuevo Pedido</h1>
 
-        {mensaje && <div className={`bg-green-500 p-2 mb-4 rounded`}>{mensaje.texto}</div>}
+        {exito && (
+          <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
+            {exito}
+          </div>
+        )}
+        {error && (
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+            {error}
+          </div>
+        )}
 
         <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
           <div className="mb-4">

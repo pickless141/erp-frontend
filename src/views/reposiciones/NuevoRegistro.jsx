@@ -12,8 +12,10 @@ const NuevoRegistro = () => {
   const [tienda, setTienda] = useState(null);
   const [existenciaAnterior, setExistenciaAnterior] = useState([]);
   const [existenciaActual, setExistenciaActual] = useState([]);
-  const [mensaje, setMensaje] = useState(null);
   const navigate = useNavigate();
+
+  const [exito, setExito] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const obtenerDatos = async () => {
@@ -99,7 +101,7 @@ const NuevoRegistro = () => {
         }
       );
 
-      setMensaje({ texto: 'Reposición creada exitosamente' });
+      setExito('Reposición creada exitosamente');
 
       setTimeout(() => {
         navigate('/reposiciones');
@@ -107,7 +109,7 @@ const NuevoRegistro = () => {
     } catch (error) {
       // Manejar errores
       console.error('Error al crear una nueva reposición:', error);
-      setMensaje({ texto: 'Error al crear una nueva reposición', color: 'red' });
+      setError('Error al crear una nueva reposición');
     }
   };
 
@@ -116,7 +118,16 @@ const NuevoRegistro = () => {
       <div className="max-w-md mx-auto">
         <h1 className="text-2xl text-gray-800 font-light mb-4">Nueva Reposición</h1>
 
-        {mensaje && <div className={`bg-green-500 p-2 mb-4 rounded`}>{mensaje.texto}</div>}
+        {exito && (
+          <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
+            {exito}
+          </div>
+        )}
+        {error && (
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+            {error}
+          </div>
+        )}
 
         <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
           <div className="mb-4">

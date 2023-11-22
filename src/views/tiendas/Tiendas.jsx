@@ -2,12 +2,13 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../../components/Layout';
 import EditarTienda from './EditarTienda';
+import { FaEdit } from "react-icons/fa";
 
 const Tiendas = () => {
   const navigate = useNavigate();
   const [tiendas, setTiendas] = useState({ docs: [], totalDocs: 0, limit: 5 });
   const [tiendaEditarId, setTiendaEditarId] = useState(null);
-  
+
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -46,7 +47,6 @@ const Tiendas = () => {
     }
   }, [currentPage, searchTerm, fetchTiendas]);
 
-  
   const handleEditarTiendaClick = (tiendaId) => {
     if (tiendaId) {
       setTiendaEditarId(tiendaId);
@@ -55,8 +55,7 @@ const Tiendas = () => {
       console.error('tiendaId es undefined');
     }
   };
-  
-  
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -106,13 +105,14 @@ const Tiendas = () => {
                 <td className="border px-4 py-2">{tienda.direccion}</td>
                 <td className="border px-4 py-2">{tienda.descripcion}</td>
                 <td className="border px-4 py-2">
-                <button
+                  <button
                     onClick={() => {
                       handleEditarTiendaClick(tienda._id);
                     }}
                     className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
                   >
-                    Editar
+                    <FaEdit color="white" 
+                    />
                   </button>
                 </td>
               </tr>
@@ -128,7 +128,7 @@ const Tiendas = () => {
               key={index}
               onClick={() => handlePageChange(index + 1)}
               className={`mx-1 px-3 py-1 rounded ${
-                currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'
+                currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300'
               }`}
             >
               {index + 1}
