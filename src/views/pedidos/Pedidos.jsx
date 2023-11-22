@@ -1,5 +1,6 @@
 // Pedidos.jsx
 import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
 import Layout from '../../components/Layout';
 import { Link } from 'react-router-dom';
 
@@ -59,23 +60,46 @@ const Pedidos = () => {
   };
 
   const confirmarEliminarPedido = (pedidoId) => {
-    if (window.confirm('¿Deseas eliminar este pedido?')) {
-      const token = localStorage.getItem('token');
-      const apiUrl = import.meta.env.VITE_API_SERVER;
-      fetch(`${apiUrl}/pedidos/${pedidoId}`, {
-        method: 'DELETE',
-        headers: {
-          'x-auth-token': token,
-        },
-      })
-        .then((response) => {
-          const updatedLocalPedidos = localPedidos.filter((pedido) => pedido._id !== pedidoId);
-          setLocalPedidos(updatedLocalPedidos);
+    Swal.fire({
+      title: '¿Deseas eliminar este pedido?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const token = localStorage.getItem('token');
+        const apiUrl = import.meta.env.VITE_API_SERVER;
+        fetch(`${apiUrl}/pedidos/${pedidoId}`, {
+          method: 'DELETE',
+          headers: {
+            'x-auth-token': token,
+          },
         })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
+          .then((response) => {
+            if (response.ok) {
+              const updatedLocalPedidos = localPedidos.filter((pedido) => pedido._id !== pedidoId);
+              setLocalPedidos(updatedLocalPedidos);
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error al eliminar el pedido',
+                text: 'Hubo un problema al intentar eliminar el pedido.',
+              });
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al eliminar el pedido',
+              text: 'Hubo un error inesperado al intentar eliminar el pedido.',
+            });
+          });
+      }
+    });
   };
 
   return (
