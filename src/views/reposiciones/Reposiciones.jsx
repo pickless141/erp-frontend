@@ -5,39 +5,45 @@ import Layout from '../../components/Layout';
 import axios from 'axios';
 
 const Reposiciones = () => {
-  const [reposiciones, setReposiciones] = useState([]);
+  const [reposiciones, setReposiciones] = useState({
+    docs: [],
+    totalDocs: 0,
+    limit: 5,
+  });
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
 
-  const fetchReposiciones = useCallback(async (page, search) => {
+  const fetchReposiciones = useCallback(async (page) => {
+    const apiUrl = import.meta.env.VITE_API_SERVER;
+    const token = localStorage.getItem('token');
+
     try {
-      const apiUrl = import.meta.env.VITE_API_SERVER;
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${apiUrl}/reposiciones/?page=${page}&search=${search}`, {
-        headers: {
-          'x-auth-token': token,
-        },
-      });
-      setReposiciones(response.data);
+      const response = await axios.get(
+        `${apiUrl}/reposiciones/?page=${page}`,
+        { headers: { 'x-auth-token': token } }
+      );
+
+      const data = response.data;
+
+      if (data.docs && data.docs.length > 0 && data.docs[0]._id) {
+        setReposiciones({ docs: data.docs, totalDocs: data.totalDocs, limit: data.limit });
+      } else {
+        console.warn('No se encontraron reposiciones.');
+        setReposiciones({ docs: [], totalDocs: 0, limit: 5 });
+      }
     } catch (error) {
-      console.error('Error al obtener las reposiciones:', error);
+      console.error('Error al obtener los datos:', error);
     }
   }, []);
 
   useEffect(() => {
-    fetchReposiciones(currentPage, searchTerm);
-  }, [currentPage, searchTerm, fetchReposiciones]);
+    fetchReposiciones(currentPage);
+  }, [currentPage, fetchReposiciones]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  const handleSearch = (term) => {
-    setSearchTerm(term);
-    setCurrentPage(1);
-  };
-
-  const pageCount = Math.ceil(reposiciones.length / 5);
+  const pageCount = Math.ceil(reposiciones.totalDocs / reposiciones.limit);
 
   return (
     <Layout>
@@ -48,13 +54,7 @@ const Reposiciones = () => {
       >
         Nuevo Registro
       </Link>
-      <input
-        type="text"
-        placeholder="Buscar por nombre de tienda"
-        value={searchTerm}
-        onChange={(e) => handleSearch(e.target.value)}
-        className="block w-full py-2 px-3 border rounded shadow-sm mb-4"
-      />
+
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-300 divide-y divide-gray-300">
@@ -68,9 +68,9 @@ const Reposiciones = () => {
           </thead>
 
           <tbody className="bg-white">
-            {reposiciones.map((reposicion) => (
+            {reposiciones.docs.map((reposicion) => (
               <tr key={reposicion._id}>
-                <td className="border px-6 py-4">{reposicion.tienda.nombreTienda}</td>
+                <td className="border px-6 py-4">{reposicion.tienda?.nombreTienda}</td>
                 <td className="border px-6 py-4">{new Date(reposicion.fechaReposicion).toLocaleDateString()}</td>
                 <td className="border px-6 py-4">
                   {/* Renderiza la información de existencia anterior */}
@@ -94,21 +94,21 @@ const Reposiciones = () => {
         </table>
       </div>
 
-      {pageCount > 1 && (
-        <div className="flex justify-center mt-4">
-          {[...Array(pageCount)].map((_, index) => (
-            <button
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
-              className={`mx-1 px-3 py-1 rounded ${
-                currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'
-              }`}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
-      )}
+      {pageCount && currentPage && (
+  <div className="flex justify-center mt-4">
+    {Array.from({ length: pageCount }, (_, index) => (
+      <button
+        key={index}
+        onClick={() => handlePageChange(index + 1)}
+        className={`mx-1 px-3 py-1 rounded ${
+          currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'
+        }`}
+      >
+        {index + 1}
+      </button>
+    ))}
+  </div>
+)}
     </Layout>
   );
 };
