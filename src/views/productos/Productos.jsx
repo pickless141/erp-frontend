@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import EditarProducto from './EditarProducto';
+import { FaEdit } from "react-icons/fa";
 
 function Productos() {
+  const navigate = useNavigate();
   const [productos, setProductos] = useState([]);
+  const [editarProducto, setEditarProducto] = useState(null);
 
 
   useEffect(() => {
@@ -29,6 +33,15 @@ function Productos() {
         console.error('Error al obtener productos:', error);
       });
   }, []);
+  
+  const handleEditar = (productoId) => {
+    if (productoId) {
+      setEditarProducto(productoId);
+      navigate(`/editarproducto/${productoId}`);
+    } else {
+      console.error('productoId es undefined');
+    }
+  };
 
   return (
     <Layout>
@@ -47,6 +60,7 @@ function Productos() {
               <th className="w-1/4 py-2 px-4">Precio</th>
               <th className="w-1/4 py-2 px-4">Existencia</th>
               <th className="w-1/4 py-2 px-4">Numero de Lote</th>
+              <th className="w-1/4 py-2 px-4">Editar</th>
             </tr>
           </thead>
           <tbody className="bg-white">
@@ -56,11 +70,23 @@ function Productos() {
                 <td className="border px-4 py-2">{producto.precio}</td>
                 <td className="border px-4 py-2">{producto.existencia}</td>
                 <td className="border px-4 text-blue-700 py-2">{producto.lote}</td>
+                <td className="border px-4 py-2">
+                  <button
+                    onClick={() => {
+                      handleEditar(producto._id);
+                    }}
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
+                  >
+                    <FaEdit color="white" 
+                    />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      {editarProducto && <EditarProducto productoId={editarProducto}/>}
     </Layout>
   );
 }

@@ -1,5 +1,6 @@
 // Pedidos.jsx
 import React, { useState, useEffect } from 'react';
+import { RiDeleteBin5Line } from "react-icons/ri";
 import Swal from 'sweetalert2';
 import Layout from '../../components/Layout';
 import { Link } from 'react-router-dom';
@@ -154,10 +155,10 @@ const Pedidos = () => {
             <p className="text-gray-800 mt-3 font-bold">Total a pagar: <span className="font-light"> Gs. {pedido.total}</span></p>
 
             <button
-              className="uppercase text-xs font-bold block mx-auto mt-4 bg-red-800 px-5 py-2 text-white rounded"
+              className="uppercase text-xs font-bold block mx-auto mt-4 bg-red-800 px-3 py-2 text-white rounded"
               onClick={() => confirmarEliminarPedido(pedido._id)}
             >
-              Eliminar Pedido
+              <RiDeleteBin5Line color='white' size={20} />
             </button>
           </div>
         </div>
