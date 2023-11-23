@@ -18,6 +18,8 @@ import NuevoRegistro from './views/reposiciones/NuevoRegistro'
 import Insumos from './views/insumos/Insumos'
 import NuevoProducto from './views/productos/NuevoProducto'
 import EditarProducto from './views/productos/EditarProducto'
+import EditarInsumo from './views/insumos/EditarInsumo'
+import NuevoInsumo from './views/insumos/NuevoInsumo'
 
 function App() {
   
@@ -52,6 +54,8 @@ function App() {
       <Route path='/nuevaproduccion' element={<NuevaProduccion/>}/>
       
       <Route path='/insumos' element={<Insumos/>}/>
+      <Route path='/nuevoinsumo' element={<NuevoInsumo/>}/>
+      <Route path='/editarinsumo/:insumoId' element={<EditarInsumo/>}/>
       
     </Routes>
   )
