@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaEdit } from "react-icons/fa";
 import EditarInsumo from './EditarInsumo';
 
+//componente que muestra todos los insumos 
 const Insumos = () => {
   const navigate = useNavigate();
   const [insumos, setInsumos] = useState([]);
