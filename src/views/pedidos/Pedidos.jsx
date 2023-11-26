@@ -1,19 +1,19 @@
-// Pedidos.jsx
-import React, { useState, useEffect } from 'react';
-import { RiDeleteBin5Line } from "react-icons/ri";
+import { useState, useEffect } from 'react';
+import { RiDeleteBin5Line } from 'react-icons/ri';
 import Swal from 'sweetalert2';
 import Layout from '../../components/Layout';
 import { Link } from 'react-router-dom';
 
 const Pedidos = () => {
-  const [pedidos, setPedidos] = useState([]);
   const [localPedidos, setLocalPedidos] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const apiUrl = import.meta.env.VITE_API_SERVER;
 
-    fetch(`${apiUrl}/pedidos/`, {
+    fetch(`${apiUrl}/pedidos/?page=${currentPage}&perPage=3`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -23,15 +23,14 @@ const Pedidos = () => {
       .then((response) => response.json())
       .then((data) => {
         if (data && data.pedidos) {
-          setPedidos(data.pedidos);
           setLocalPedidos(data.pedidos);
+          setTotalPages(Math.ceil(data.totalPedidos / 3));
         }
       })
       .catch((error) => {
         console.error(error);
       });
-  }, []);
-
+  }, [currentPage]);
 
   const cambiarEstadoPedido = (pedidoId, nuevoEstado) => {
     const token = localStorage.getItem('token');
@@ -106,63 +105,85 @@ const Pedidos = () => {
   return (
     <Layout>
       <h1 className="text-2xl text-gray-800 font-light mb-4">Pedidos</h1>
-      <Link to="/nuevopedido" className="bg-blue-800 py-2 px-5 mt-3 inline-block text-white rounded text-sm hover:bg-gray-800 mb-3 uppercase font-bold w-full lg:w-auto text-center">
+      <Link
+        to="/nuevopedido"
+        className="bg-blue-800 py-2 px-5 mt-3 inline-block text-white rounded text-sm hover:bg-gray-800 mb-3 uppercase font-bold w-full lg:w-auto text-center"
+      >
         Nuevo Pedido
       </Link>
-      
-      {localPedidos && localPedidos.map((pedido) => (
-        <div key={pedido._id} className={`border-t-4 mt-4 bg-white rounded p-6 md:grid md:grid-cols-2 md:gap-4 shadow-lg`}>
-          <div>
-            <p className="font-bold text-gray-800">Cliente: {pedido.tienda.nombreCliente}</p>
 
-            {pedido.tienda.nombreTienda && (
-              <p className="flex items-center my-2">
-                {pedido.tienda.nombreTienda}
+      {localPedidos &&
+        localPedidos.map((pedido) => (
+          <div
+            key={pedido._id}
+            className={`border-t-4 mt-4 bg-white rounded p-6 md:grid md:grid-cols-2 md:gap-4 shadow-lg`}
+          >
+            <div>
+              <p className="font-bold text-gray-800">Cliente: {pedido.tienda.nombreCliente}</p>
+
+              {pedido.tienda.nombreTienda && (
+                <p className="flex items-center my-2">{pedido.tienda.nombreTienda}</p>
+              )}
+
+              {pedido.tienda.direccion && (
+                <p className="flex items-center my-2">{pedido.tienda.direccion}</p>
+              )}
+
+              <h2 className="text-gray-800 font-bold mt-10">Estado Pedido:</h2>
+
+              <select
+                className={`mt-2 appearance-none border text-white p-2 text-center rounded leading-tight focus:outline-none focus:border-blue-500 uppercase text-xs font-bold ${
+                  pedido.estado === 'PENDIENTE' ? 'bg-gray-500' : ''
+                } ${
+                  pedido.estado === 'COMPLETADO' ? 'bg-green-500' : ''
+                } ${pedido.estado === 'CANCELADO' ? 'bg-red-500' : ''}`}
+                value={pedido.estado}
+                onChange={(e) => cambiarEstadoPedido(pedido._id, e.target.value)}
+              >
+                <option value="COMPLETADO">COMPLETADO</option>
+                <option value="PENDIENTE">PENDIENTE</option>
+                <option value="CANCELADO">CANCELADO</option>
+              </select>
+            </div>
+
+            <div>
+              <h2 className="text-gray-800 font-bold mt-2">Resumen del Pedido</h2>
+              {pedido.pedido &&
+                pedido.pedido.map((articulo) => (
+                  <div key={articulo.producto._id} className="mt-4">
+                    <p className="text-sm text-gray-600">
+                      Producto: {articulo.producto.nombreProducto}
+                    </p>
+                    <p className="text-sm text-gray-600">Cantidad: {articulo.cantidad}</p>
+                  </div>
+                ))}
+
+              <p className="text-gray-800 mt-3 font-bold">
+                Total a pagar: <span className="font-light"> Gs. {pedido.total}</span>
               </p>
-            )}
 
-            {pedido.tienda.direccion && (
-              <p className="flex items-center my-2">
-                {pedido.tienda.direccion}
-              </p>
-            )}
-
-            <h2 className="text-gray-800 font-bold mt-10">Estado Pedido:</h2>
-
-            <select
-              className={`mt-2 appearance-none border text-white p-2 text-center rounded leading-tight focus:outline-none focus:border-blue-500 uppercase text-xs font-bold ${
-                pedido.estado === 'PENDIENTE' ? 'bg-gray-500' : ''} ${
-                pedido.estado === 'COMPLETADO' ? 'bg-green-500' : ''} ${
-                pedido.estado === 'CANCELADO' ? 'bg-red-500' : ''}`}
-              value={pedido.estado}
-              onChange={(e) => cambiarEstadoPedido(pedido._id, e.target.value)}
-            >
-              <option value="COMPLETADO">COMPLETADO</option>
-              <option value="PENDIENTE">PENDIENTE</option>
-              <option value="CANCELADO">CANCELADO</option>
-            </select>
+              <button
+                className="uppercase text-xs font-bold block mx-auto mt-4 bg-red-800 px-3 py-2 text-white rounded"
+                onClick={() => confirmarEliminarPedido(pedido._id)}
+              >
+                <RiDeleteBin5Line color="white" size={20} />
+              </button>
+            </div>
           </div>
-
-          <div>
-            <h2 className="text-gray-800 font-bold mt-2">Resumen del Pedido</h2>
-            {pedido.pedido && pedido.pedido.map((articulo) => (
-              <div key={articulo.producto._id} className="mt-4">
-                <p className="text-sm text-gray-600">Producto: {articulo.producto.nombreProducto}</p>
-                <p className="text-sm text-gray-600">Cantidad: {articulo.cantidad}</p>
-              </div>
-            ))}
-
-            <p className="text-gray-800 mt-3 font-bold">Total a pagar: <span className="font-light"> Gs. {pedido.total}</span></p>
-
-            <button
-              className="uppercase text-xs font-bold block mx-auto mt-4 bg-red-800 px-3 py-2 text-white rounded"
-              onClick={() => confirmarEliminarPedido(pedido._id)}
-            >
-              <RiDeleteBin5Line color='white' size={20} />
-            </button>
-          </div>
-        </div>
-      ))}
+        ))}
+      <div className="flex justify-center mt-4">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index + 1}
+            onClick={() => setCurrentPage(index + 1)}
+            className={`mx-2 px-4 py-2 text-sm ${
+              currentPage === index + 1 ? 'bg-gray-800 text-white' : 'bg-gray-300 text-gray-800'
+            } rounded`}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
     </Layout>
   );
 };
