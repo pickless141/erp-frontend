@@ -82,10 +82,10 @@ const Insumos = () => {
         placeholder="Buscar por nombre de insumo"
         value={searchTerm}
         onChange={(e) => handleSearch(e.target.value)}
-        className="block w-full py-2 px-3 border rounded shadow-sm mb-4"
+        className="block w-80 py-2 px-3 border rounded shadow-sm mb-4"
       />
 
-      <div className="overflow-x-scroll">
+      <div className="overflow-auto w-full lg:w-auto">
         <table className="table-auto shadow-md mt-10 w-full lg:w-auto">
           <thead className="bg-gray-800">
             <tr className="text-white">
@@ -119,7 +119,7 @@ const Insumos = () => {
       </div>
 
       {pageCount > 1 && (
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center mt-4 space-x-2">
           {[...Array(pageCount)].map((_, index) => (
             <button
               key={index}
