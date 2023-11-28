@@ -7,7 +7,9 @@ const Sidebar = () => {
 
     return (
         <aside className="bg-gray-700 sm:w-1/3 xl:w-1/5 sm:min-h-screen p-5">
+            <Link to="/home">
             <img src={logo} alt="loginImagen"/>
+            </Link>
 
             <nav className="mt-5 list-none">
                 <li className={location.pathname === "/home" ? "bg-blue-800 p-2" : "p-2"}>

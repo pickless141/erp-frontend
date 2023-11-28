@@ -4,11 +4,14 @@ import { Link } from 'react-router-dom';
 
 function Producciones() {
   const [producciones, setProducciones] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_SERVER;
     const token = localStorage.getItem('token');
-    fetch(`${apiUrl}/producciones/`, {
+
+    fetch(`${apiUrl}/producciones/?page=${currentPage}&perPage=10`, {
       method: 'GET',
       headers: {
         'x-auth-token': token,
@@ -23,11 +26,12 @@ function Producciones() {
       })
       .then((data) => {
         setProducciones(data.producciones);
+        setTotalPages(Math.ceil(data.totalProducciones / 10));
       })
       .catch((error) => {
         console.error('Error al obtener producciones:', error);
       });
-  }, []);
+  }, [currentPage]);
 
   return (
     <Layout>
@@ -58,6 +62,21 @@ function Producciones() {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="flex justify-center mt-4">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            
+            key={index + 1}
+            onClick={() => setCurrentPage(index + 1)}
+            className={`mx-2 px-4 py-2 text-sm ${
+              currentPage === index + 1 ? 'bg-gray-800 text-white' : 'bg-gray-300 text-gray-800'
+            } rounded`}
+          >
+            {index + 1}
+          </button>
+          
+        ))}
       </div>
     </Layout>
   );
