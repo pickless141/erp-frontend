@@ -84,7 +84,14 @@ const EditarTienda = () => {
   };
 
   if (loading) {
-    return <p>Cargando datos de la tienda...</p>;
+    return (
+      <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-200 bg-opacity-75">
+        <div className="max-w-md bg-white p-8 rounded shadow-md text-center">
+          <p className="text-black font-bold uppercase text-2xl mb-4">Cargando datos de la tienda...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500 mx-auto"></div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
