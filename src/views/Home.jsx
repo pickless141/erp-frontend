@@ -3,50 +3,59 @@ import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import ClienteTiendaDetail from './clientes/ClienteTiendaDetail';
 import EditarCliente from './clientes/EditarCliente';
-import { FaEdit } from 'react-icons/fa';
+import useStore from '../store';
+import Swal from 'sweetalert2';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 
 const Home = () => {
   const navigate = useNavigate();
-  const [clientes, setClientes] = useState({ docs: [], totalDocs: 0, limit: 5 });
+  const {clientes, fetchClientes, eliminarItem} = useStore(state => ({
+    clientes: state.clientes,
+    fetchClientes: state.fetchClientes,
+    eliminarItem: state.eliminarItem,
+  }));
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
   const [clienteEditarId, setClienteEditarId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
-  const fetchClientes = useCallback(async (token, page, search) => {
-    try {
-      const apiUrl = import.meta.env.VITE_API_SERVER;
-      const response = await fetch(`${apiUrl}/clientes/?page=${page}&search=${search}`, {
-        method: 'GET',
-        headers: {
-          'x-auth-token': token,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al obtener los datos');
-      }
-
-      const data = await response.json();
-
-      if (data.docs && data.docs.length > 0 && data.docs[0]._id) {
-        setClientes({ docs: data.docs, totalDocs: data.totalDocs, limit: data.limit });
-      } else {
-        console.error('La estructura de la respuesta no es la esperada:', data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      fetchClientes(token, currentPage, searchTerm);
-    } else {
-      console.error('Token no disponible');
-    }
+    fetchClientes(currentPage, searchTerm);
   }, [currentPage, searchTerm, fetchClientes]);
+
+  const confirmarEliminarCliente = (clienteId) => {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Esta acción no se puede revertir. ¿Deseas eliminar el cliente?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        eliminarItem('clientes', clienteId, {
+          onSuccess: () => {
+            Swal.fire(
+              'Eliminado!',
+              'El cliente ha sido eliminado.',
+              'success'
+            );
+            fetchClientes(currentPage, searchTerm);
+          },
+          onError: () => {
+            Swal.fire(
+              'Error!',
+              'No se pudo eliminar el cliente.',
+              'error'
+            );
+          }
+        });
+      }
+    });
+  };
+
 
   const handleVerTiendasClick = (clienteId) => {
     if (clienteId) {
@@ -79,37 +88,40 @@ const Home = () => {
 
   return (
     <Layout>
-      <h1 className="text-2xl text-gray-800 font-light">Clientes</h1>
-      <Link
-        to="/nuevocliente"
-        className="bg-blue-800 py-2 px-5 mt-3 inline-block text-white rounded text-sm hover:bg-gray-800 mb-3 uppercase font-bold w-full lg:w-auto text-center"
-      >
-        Nuevo Cliente
-      </Link>
+      <h1 className="text-2xl text-gray-800 font-semibold mb-6">Clientes</h1>
+      <div className="flex flex-col md:flex-row justify-between mb-6">
+        <Link
+          to="/nuevocliente"
+          className="bg-blue-800 py-2 px-5 inline-block text-white rounded text-sm hover:bg-gray-800 mb-3 uppercase font-bold w-full md:w-auto text-center md:mr-3 transition-colors duration-300"
+        >
+          Nuevo Cliente
+        </Link>
+        <input
+          type="text"
+          placeholder="Buscar por nombre de cliente"
+          value={searchTerm}
+          onChange={(e) => handleSearch(e.target.value)}
+          className="block w-full py-2 px-3 border rounded shadow-sm mb-3 md:mb-0"
+        />
+      </div>
 
-      <input
-        type="text"
-        placeholder="Buscar por nombre de cliente"
-        value={searchTerm}
-        onChange={(e) => handleSearch(e.target.value)}
-        className="block w-full py-2 px-3 border rounded shadow-sm mb-4"
-      />
+      <div className="overflow-x-auto">
+        <table className="min-w-full table-auto shadow-md">
+          <thead className="bg-gray-800 text-white">
+            <tr>
+              <th className="px-4 py-3">Nombre</th>
+              <th className="px-4 py-3">Ruc</th>
+              <th className="px-4 py-3">Email</th>
+              <th className="px-4 py-3">Tiendas</th>
+              <th className="px-4 py-3">Editar</th>
+              <th className="px-4 py-3">Eliminar</th>
 
-      <div className="overflow-x-scroll">
-        <table className="table-auto shadow-md mt-10 w-full w-lg">
-          <thead className="bg-gray-800">
-            <tr className="text-white">
-              <th className="w-1/5 py-2">Nombre</th>
-              <th className="w-1/5 py-2">Ruc</th>
-              <th className="w-1/5 py-2">Email</th>
-              <th className="w-1/5 py-2">Tiendas</th>
-              <th className="w-1/5 py-2">Editar</th>
             </tr>
           </thead>
 
           <tbody className="bg-white">
             {clientes.docs.map((cliente, index) => (
-              <tr key={index}>
+              <tr key={index} className="hover:bg-gray-100">
                 <td className="border px-4 py-2">{cliente.nombre}</td>
                 <td className="border px-4 py-2">{cliente.ruc}</td>
                 <td className="border px-4 py-2">{cliente.email}</td>
@@ -117,19 +129,25 @@ const Home = () => {
                   <Link
                     to={`/home/${cliente._id}`}
                     onClick={() => handleVerTiendasClick(cliente._id)}
-                    className="hover:text-blue-600 hover:underline"
+                    className="text-blue-500 hover:underline transition-colors duration-300"
                   >
                     Ver Tiendas
                   </Link>
                 </td>
-                <td className="border px-4 py-2">
+                <td className="border px-4 py-2 text-center">
                   <button
-                    onClick={() => {
-                      handleEditarClienteClick(cliente._id);
-                    }}
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
+                    onClick={() => handleEditarClienteClick(cliente._id)}
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded inline-flex items-center justify-center transition-colors duration-300 mr-2"
                   >
                     <FaEdit />
+                  </button>
+                </td>
+                <td className="border px-4 py-2 text-center">
+                    <button
+                    onClick={() => confirmarEliminarCliente(cliente._id)}
+                    className="text-red-500 hover:text-red-700 transition duration-300 inline-flex items-center justify-center"
+                  >
+                    <FaTrash />
                   </button>
                 </td>
               </tr>
@@ -146,7 +164,7 @@ const Home = () => {
               onClick={() => handlePageChange(index + 1)}
               className={`mx-1 px-3 py-1 rounded ${
                 currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300'
-              }`}
+              } transition-colors duration-300`}
             >
               {index + 1}
             </button>

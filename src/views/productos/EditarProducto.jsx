@@ -7,8 +7,9 @@ const EditarProducto = () => {
   const { productoId } = useParams();
   const [producto, setProducto] = useState({
     nombreProducto: '',
-    precio: '',
     lote: '',
+    existencia: '',
+    codBarra: ''
   });
   const [exito, setExito] = useState(null);
   const [error, setError] = useState(null);
@@ -79,14 +80,7 @@ const EditarProducto = () => {
   };
 
   if (loading) {
-    return (
-      <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-200 bg-opacity-75">
-        <div className="max-w-md bg-white p-8 rounded shadow-md text-center">
-          <p className="text-black font-bold uppercase text-2xl mb-4">Cargando datos del producto...</p>
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500 mx-auto"></div>
-        </div>
-      </div>
-    );
+    return <p>Cargando datos del producto...</p>;
   }
 
   if (error) {
@@ -124,20 +118,6 @@ const EditarProducto = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-              Precio:
-            </label>
-            <input
-              type="number"
-              id="precio"
-              name="precio"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={handleInputChange}
-              value={producto.precio}
-              required
-            />
-          </div>
-          <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="ruc">
               Lote:
             </label>
@@ -148,6 +128,32 @@ const EditarProducto = () => {
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               onChange={handleInputChange}
               value={producto.lote}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="ruc">
+              Existencia:
+            </label>
+            <input
+              type="number"
+              id="existencia"
+              name="existencia"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              onChange={handleInputChange}
+              value={producto.existencia}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="ruc">
+              Cod. de Barra:
+            </label>
+            <input
+              type="number"
+              id="codBarra"
+              name="codBarra"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              onChange={handleInputChange}
+              value={producto.codBarra}
             />
           </div>
           <div className="flex items-center justify-between">

@@ -6,8 +6,8 @@ const NuevoProducto = () => {
   const navigate = useNavigate();
   const [producto, setProducto] = useState({
     nombreProducto: '',
-    precio: '',
     lote: '',
+    codBarra: 0
   });
 
   const [exito, setExito] = useState(null);
@@ -77,20 +77,6 @@ const NuevoProducto = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-              Precio:
-            </label>
-            <input
-              type="number"
-              id="precio"
-              name="precio"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={handleInputChange}
-              value={producto.precio}
-              required
-            />
-          </div>
-          <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="ruc">
               Lote:
             </label>
@@ -101,6 +87,19 @@ const NuevoProducto = () => {
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               onChange={handleInputChange}
               value={producto.lote}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="ruc">
+              Cod. de Barra:
+            </label>
+            <input
+              type="number"
+              id="codBarra"
+              name="codBarra"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              onChange={handleInputChange}
+              value={producto.codBarra}
             />
           </div>
           <div className="flex items-center justify-between">

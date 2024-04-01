@@ -48,20 +48,21 @@ const ClienteTiendaDetail = () => {
 
   return (
     <Layout>
-      <div className="overflow-x-scroll">
+      <div className="max-w-4xl mx-auto py-8">
         {tiendas.length > 0 ? (
           <div>
-            <table className="table-auto shadow-md mt-10 w-full w-lg">
-              <thead className="bg-gray-800">
-                <tr className="text-white">
-                  <th className="w-1/5 py-2">Nombre de la Tienda</th>
+            <table className="min-w-full divide-y divide-gray-200 shadow overflow-hidden rounded-lg">
+              <thead className="bg-gray-800 text-white">
+                <tr>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                    Nombre de la Tienda
+                  </th>
                 </tr>
               </thead>
-
-              <tbody className="bg-white">
+              <tbody className="bg-white divide-y divide-gray-200">
                 {tiendas.map((tienda) => (
                   <tr key={tienda._id}>
-                    <td className="border px-4 py-2">{tienda.nombreTienda}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{tienda.nombreTienda}</td>
                   </tr>
                 ))}
               </tbody>
@@ -69,7 +70,7 @@ const ClienteTiendaDetail = () => {
 
             <button
               onClick={() => navigate('/home')}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2  px-4 rounded mt-4"
+              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow"
             >
               Volver a Clientes
             </button>
@@ -79,7 +80,7 @@ const ClienteTiendaDetail = () => {
             <p className="text-gray-700">No hay tiendas registradas.</p>
             <button
               onClick={() => navigate('/home')}
-              className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4 mr-4"
+              className="mt-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded shadow focus:outline-none focus:shadow-outline"
             >
               Volver a Clientes
             </button>

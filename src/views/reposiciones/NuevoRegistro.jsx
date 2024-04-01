@@ -1,68 +1,29 @@
-// NuevoRegistro.jsx
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import axios from 'axios';
 import Layout from '../../components/Layout';
-import { useTiendas } from '../../context/TiendasContext';
+import useStore from '../../store';
 
 const NuevoRegistro = () => {
-  const { tiendas, obtenerTiendas } = useTiendas();
-  const [productosOptions, setProductosOptions] = useState([]);
+  const {tiendaSelect, fetchTiendaSelect, productos, fetchProductos} = useStore();
   const [tienda, setTienda] = useState(null);
-  const [existenciaAnterior, setExistenciaAnterior] = useState([]);
-  const [existenciaActual, setExistenciaActual] = useState([]);
+  const [cantidadesExhibidas, setCantidadesExhibidas] = useState({});
+  const [cantidadesDeposito, setCantidadesDeposito] = useState({});
+  const [cantidadesSugeridas, setCantidadesSugeridas] = useState({});
+  const [cantidadesVencidas, setCantidadesVencidas] = useState({});
   const navigate = useNavigate();
 
   const [exito, setExito] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const obtenerDatos = async () => {
-      await obtenerTiendas();
-    };
-    obtenerDatos();
-  }, [obtenerTiendas]);
-
-  useEffect(() => {
-    const obtenerProductos = async () => {
-      try {
-        const apiUrl = import.meta.env.VITE_API_SERVER;
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`${apiUrl}/productos/`, {
-          headers: {
-            'x-auth-token': token,
-          },
-        });
-        const productos = response.data.map(producto => ({
-          value: producto._id,
-          label: `${producto.nombreProducto} - Existencia: ${producto.existencia}`,
-        }));
-        setProductosOptions(productos);
-      } catch (error) {
-        console.error('Error al obtener los productos:', error);
-      }
-    };
-
-    obtenerProductos();
-  }, []);
+    fetchTiendaSelect();
+    fetchProductos();
+  }, [fetchTiendaSelect, fetchProductos])
 
   const handleTiendaChange = selectedOption => {
     setTienda(selectedOption);
-  };
-
-  const handleProductosChange = (selectedOptions, setState) => {
-    setState(selectedOptions);
-  };
-
-  const handleCantidadChange = (producto, cantidad, setState) => {
-    setState(prevProducts =>
-      prevProducts.map(prevProduct =>
-        prevProduct.value === producto.value
-          ? { ...prevProduct, cantidad: cantidad === '' ? null : parseInt(cantidad, 10) }
-          : prevProduct
-      )
-    );
   };
 
   const handleSubmit = async e => {
@@ -71,22 +32,14 @@ const NuevoRegistro = () => {
       const token = localStorage.getItem('token');
       const apiUrl = import.meta.env.VITE_API_SERVER;
 
-      // Transforma los datos antes de enviarlos al servidor
       const reposicionData = {
         tiendaId: tienda.value,
-        existenciaAnterior: existenciaAnterior.map(item => ({
-          producto: {
-            _id: item.value,
-            nombreProducto: item.label.split(' - ')[0],
-          },
-          cantidad: item.cantidad,
-        })),
-        existenciaActual: existenciaActual.map(item => ({
-          producto: {
-            _id: item.value,
-            nombreProducto: item.label.split(' - ')[0],
-          },
-          cantidad: item.cantidad,
+        productos: productos.map(producto => ({
+          producto: producto._id,
+          cantidadExhibida: cantidadesExhibidas[producto._id] || 0,
+          deposito: cantidadesDeposito[producto._id] || 0,
+          sugerido: cantidadesSugeridas[producto._id] || 0,
+          vencidos: cantidadesVencidas[producto._id] || 0,
         })),
       };
 
@@ -107,7 +60,6 @@ const NuevoRegistro = () => {
         navigate('/reposiciones');
       }, 2000);
     } catch (error) {
-      // Manejar errores
       console.error('Error al crear una nueva reposición:', error);
       setError('Error al crear una nueva reposición');
     }
@@ -115,7 +67,7 @@ const NuevoRegistro = () => {
 
   return (
     <Layout>
-      <div className="max-w-md mx-auto">
+      <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl text-gray-800 font-light mb-4">Nueva Reposición</h1>
 
         {exito && (
@@ -132,51 +84,83 @@ const NuevoRegistro = () => {
         <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">Selecciona la tienda</label>
-            <Select options={tiendas} onChange={handleTiendaChange} value={tienda} />
+            <Select options={tiendaSelect} onChange={handleTiendaChange} value={tienda} />
           </div>
 
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Existencia Anterior</label>
-            <Select
-              options={productosOptions}
-              onChange={(selectedOptions) => handleProductosChange(selectedOptions, setExistenciaAnterior)}
-              isMulti
-              value={existenciaAnterior}
-            />
-            {existenciaAnterior.map(producto => (
-              <div key={producto.value} className="flex items-center mt-2">
-                <label className="text-sm">{producto.label}</label>
-                <input
-                  type="number"
-                  value={producto.cantidad || ''}
-                  onChange={(e) => handleCantidadChange(producto, e.target.value, setExistenciaAnterior)}
-                  className="w-20 ml-2 px-2 py-1 border rounded"
-                />
-              </div>
-            ))}
+          <div className="mb-4 overflow-x-auto">
+            <table className="min-w-full border divide-y">
+              <thead>
+                <tr>
+                  <th className="py-2 px-4 border-b">Productos</th>
+                  <th className="py-2 px-4 border-b">Cant. Exhibida</th>
+                  <th className="py-2 px-4 border-b">Cant. Depósito</th>
+                  <th className="py-2 px-4 border-b">Cant. Sugerida</th>
+                  <th className="py-2 px-4 border-b">Cant. Vencida</th>
+                </tr>
+              </thead>
+              <tbody>
+                {productos.map(producto => (
+                  <tr key={producto._id}>
+                    <td className="py-2 px-4 border-b">{producto.nombreProducto}</td>
+                    <td className="py-2 px-4 border-b">
+                      <input
+                        type="number"
+                        className="w-16 px-2 py-1 border rounded"
+                        value={cantidadesExhibidas[producto._id] || ''}
+                        onChange={e => {
+                          setCantidadesExhibidas(prevState => ({
+                            ...prevState,
+                            [producto._id]: e.target.value,
+                          }));
+                        }}
+                      />
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      <input
+                        type="number"
+                        className="w-16 px-2 py-1 border rounded"
+                        value={cantidadesDeposito[producto._id] || ''}
+                        onChange={e => {
+                          setCantidadesDeposito(prevState => ({
+                            ...prevState,
+                            [producto._id]: e.target.value,
+                          }));
+                        }}
+                      />
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      <input
+                        type="number"
+                        className="w-16 px-2 py-1 border rounded"
+                        value={cantidadesSugeridas[producto._id] || ''}
+                        onChange={e => {
+                          setCantidadesSugeridas(prevState => ({
+                            ...prevState,
+                            [producto._id]: e.target.value,
+                          }));
+                        }}
+                      />
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      <input
+                        type="number"
+                        className="w-16 px-2 py-1 border rounded"
+                        value={cantidadesVencidas[producto._id] || ''}
+                        onChange={e => {
+                          setCantidadesVencidas(prevState => ({
+                            ...prevState,
+                            [producto._id]: e.target.value,
+                          }));
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Existencia Actual</label>
-            <Select
-              options={productosOptions}
-              onChange={(selectedOptions) => handleProductosChange(selectedOptions, setExistenciaActual)}
-              isMulti
-              value={existenciaActual}
-            />
-            {existenciaActual.map(producto => (
-              <div key={producto.value} className="flex items-center mt-2">
-                <label className="text-sm">{producto.label}</label>
-                <input
-                  type="number"
-                  value={producto.cantidad || ''}
-                  onChange={(e) => handleCantidadChange(producto, parseInt(e.target.value, 10), setExistenciaActual)}
-                  className="w-20 ml-2 px-2 py-1 border rounded"
-                />
-              </div>
-            ))}
-          </div>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-center mt-4">
             <button
               type="submit"
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
@@ -185,10 +169,8 @@ const NuevoRegistro = () => {
             </button>
             <button
               type="button"
-              onClick={() => {
-                navigate('/reposiciones');
-              }}
-              className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="ml-2 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+              onClick={() => navigate('/reposiciones')}
             >
               Volver
             </button>

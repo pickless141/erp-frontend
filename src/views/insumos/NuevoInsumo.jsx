@@ -1,13 +1,16 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import Layout from '../../components/Layout'
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import Layout from '../../components/Layout';
 
 
 function NuevoInsumo() {
   const navigate = useNavigate();
   const [insumo, setInsumo] = useState({
     producto: '',
-    peso: '',
+    peso: {
+      valor: '',
+      unidad: 'kg',
+    },
     descripcion: '',
   });
   const [exito, setExito] = useState(null);
@@ -31,7 +34,7 @@ function NuevoInsumo() {
       if (response.ok) {
         setExito('Insumo creado exitosamente');
         setTimeout(() => {
-          navigate('/insumos');;
+          navigate('/insumos');
         }, 1500);
       } else {
         setError('Error al crear un nuevo insumo');
@@ -44,8 +47,20 @@ function NuevoInsumo() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setInsumo({ ...insumo, [name]: value });
+    setInsumo({
+      ...insumo,
+      [name]: name === 'peso' ? { ...insumo.peso, valor: value } : value,
+    });
   };
+
+  const handleUnidadChange = (e) => {
+    const { value } = e.target;
+    setInsumo({
+      ...insumo,
+      peso: { ...insumo.peso, unidad: value },
+    });
+  };
+
   return (
     <Layout>
       <div className="max-w-md mx-auto">
@@ -62,7 +77,7 @@ function NuevoInsumo() {
         )}
         <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="nombre">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="producto">
               Nombre del producto:
             </label>
             <input
@@ -76,22 +91,38 @@ function NuevoInsumo() {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="peso">
               Peso:
             </label>
-            <input
-              type="number"
-              id="peso"
-              name="peso"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={handleInputChange}
-              value={insumo.peso}
-              required
-            />
+            <div className="flex">
+              <input
+                type="number"
+                id="peso"
+                name="peso"
+                className="shadow appearance-none border rounded w-2/3 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                onChange={handleInputChange}
+                value={insumo.peso.valor}
+                required
+              />
+              <select
+                className="block appearance-none w-1/3 border border-gray-300 py-2 px-4 bg-white text-gray-700 rounded leading-tight focus:outline-none focus:border-blue-500"
+                id="unidad"
+                name="unidad"
+                onChange={handleUnidadChange}
+                value={insumo.peso.unidad}
+              >
+                <option value="kg">kg</option>
+                <option value="g">g</option>
+                <option value="lb">lb</option>
+                <option value="oz">oz</option>
+                <option value="l">l</option>
+                <option value="ml">ml</option>
+              </select>
+            </div>
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="ruc">
-              Descripcion:
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="descripcion">
+              Descripción:
             </label>
             <input
               type="text"
@@ -109,14 +140,17 @@ function NuevoInsumo() {
             >
               Crear Insumo
             </button>
-            <Link to="/insumos" className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            <Link
+              to="/insumos"
+              className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
               Volver
             </Link>
           </div>
         </form>
       </div>
     </Layout>
-  )
+  );
 }
 
-export default NuevoInsumo
+export default NuevoInsumo;

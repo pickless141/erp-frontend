@@ -112,7 +112,7 @@ const EditarCliente = () => {
         <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="nombre">
-              Nombre:
+              Razon Social:
             </label>
             <input
               type="text"

@@ -1,62 +1,49 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { RiDeleteBin5Line } from 'react-icons/ri';
 import Swal from 'sweetalert2';
 import Layout from '../../components/Layout';
-import { Link } from 'react-router-dom';
+import useStore from '../../store';
 
 const Pedidos = () => {
-  const [localPedidos, setLocalPedidos] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const { pedidos, fetchPedidos, eliminarItem, currentPage, setCurrentPage,totalPages } = useStore((state) => ({
+    pedidos: state.pedidos.docs,
+    fetchPedidos: state.fetchPedidos,
+    eliminarItem: state.eliminarItem,
+    currentPage: state.pedidos.currentPage,
+    setCurrentPage: state.setCurrentPage,
+    totalPages: state.pedidos.totalPages,
+  }));
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const apiUrl = import.meta.env.VITE_API_SERVER;
-
-    fetch(`${apiUrl}/pedidos/?page=${currentPage}&perPage=3`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-auth-token': token,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data && data.pedidos) {
-          setLocalPedidos(data.pedidos);
-          setTotalPages(Math.ceil(data.totalPedidos / 3));
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [currentPage]);
-
+    fetchPedidos(currentPage);
+  }, [currentPage, fetchPedidos]);
+  
+  const { updatePedidoEstado } = useStore();
+  
   const cambiarEstadoPedido = (pedidoId, nuevoEstado) => {
     const token = localStorage.getItem('token');
     const apiUrl = import.meta.env.VITE_API_SERVER;
-
+  
     fetch(`${apiUrl}/pedidos/${pedidoId}/cambiarEstado`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'x-auth-token': token,
       },
-      body: JSON.stringify({ pedidoId, nuevoEstado }),
+      body: JSON.stringify({ nuevoEstado }), 
     })
-      .then((response) => response.json())
-      .then((data) => {
-        const updatedLocalPedidos = localPedidos.map((pedido) => {
-          if (pedido._id === pedidoId) {
-            return { ...pedido, estado: nuevoEstado };
-          }
-          return pedido;
-        });
-        setLocalPedidos(updatedLocalPedidos);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    .then(response => Promise.all([response.ok, response.json()])) 
+    .then(([ok, data]) => {
+      if (!ok) {
+        throw new Error(data.error || 'Error al actualizar el estado del pedido');
+      }
+      updatePedidoEstado(pedidoId, nuevoEstado);
+      Swal.fire('Actualizado', 'El estado del pedido ha sido actualizado exitosamente', 'success');
+    })
+    .catch((error) => {
+      console.error(error);
+      Swal.fire('Error', error.message, 'error');
+    });
   };
 
   const confirmarEliminarPedido = (pedidoId) => {
@@ -70,73 +57,46 @@ const Pedidos = () => {
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        const token = localStorage.getItem('token');
-        const apiUrl = import.meta.env.VITE_API_SERVER;
-        fetch(`${apiUrl}/pedidos/${pedidoId}`, {
-          method: 'DELETE',
-          headers: {
-            'x-auth-token': token,
+        eliminarItem('pedidos', pedidoId, {
+          onSuccess: () => {
+            fetchPedidos(currentPage); 
+            Swal.fire('Eliminado!', 'El pedido ha sido eliminado.', 'success');
           },
-        })
-          .then((response) => {
-            if (response.ok) {
-              const updatedLocalPedidos = localPedidos.filter((pedido) => pedido._id !== pedidoId);
-              setLocalPedidos(updatedLocalPedidos);
-            } else {
-              Swal.fire({
-                icon: 'error',
-                title: 'Error al eliminar el pedido',
-                text: 'Hubo un problema al intentar eliminar el pedido.',
-              });
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-            Swal.fire({
-              icon: 'error',
-              title: 'Error al eliminar el pedido',
-              text: 'Hubo un error inesperado al intentar eliminar el pedido.',
-            });
-          });
+          onError: () => {
+            Swal.fire('Error!', 'No se pudo eliminar el pedido.', 'error');
+          },
+        });
       }
     });
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    fetchPedidos(page);
   };
 
   return (
     <Layout>
       <h1 className="text-2xl text-gray-800 font-light mb-4">Pedidos</h1>
-      <Link
-        to="/nuevopedido"
-        className="bg-blue-800 py-2 px-5 mt-3 inline-block text-white rounded text-sm hover:bg-gray-800 mb-3 uppercase font-bold w-full lg:w-auto text-center"
-      >
-        Nuevo Pedido
-      </Link>
 
-      {localPedidos &&
-        localPedidos.map((pedido) => (
+      {pedidos &&
+        pedidos.map((pedido) => (
           <div
             key={pedido._id}
-            className={`border-t-4 mt-4 bg-white rounded p-6 md:grid md:grid-cols-2 md:gap-4 shadow-lg`}
+            className="border-t-4 mt-4 bg-white rounded p-6 md:grid md:grid-cols-2 md:gap-4 shadow-lg"
           >
             <div>
               <p className="font-bold text-gray-800">Cliente: {pedido.tienda.nombreCliente}</p>
-
-              {pedido.tienda.nombreTienda && (
-                <p className="flex items-center my-2">{pedido.tienda.nombreTienda}</p>
-              )}
-
-              {pedido.tienda.direccion && (
-                <p className="flex items-center my-2">{pedido.tienda.direccion}</p>
-              )}
+              {pedido.tienda.nombreTienda && <p className="flex items-center my-2">{pedido.tienda.nombreTienda}</p>}
+              {pedido.tienda.direccion && <p className="flex items-center my-2">{pedido.tienda.direccion}</p>}
 
               <h2 className="text-gray-800 font-bold mt-10">Estado Pedido:</h2>
-
               <select
-                className={`mt-2 appearance-none border text-white p-2 text-center rounded leading-tight focus:outline-none focus:border-blue-500 uppercase text-xs font-bold ${
-                  pedido.estado === 'PENDIENTE' ? 'bg-gray-500' : ''
+                className={`mt-2 appearance-none border p-2 text-center rounded leading-tight focus:outline-none uppercase text-xs font-bold ${
+                  pedido.estado === 'PENDIENTE' ? 'bg-gray-500 text-white' : ''
                 } ${
-                  pedido.estado === 'COMPLETADO' ? 'bg-green-500' : ''
-                } ${pedido.estado === 'CANCELADO' ? 'bg-red-500' : ''}`}
+                  pedido.estado === 'COMPLETADO' ? 'bg-green-500 text-white' : ''
+                } ${pedido.estado === 'CANCELADO' ? 'bg-red-500 text-white' : ''}`}
                 value={pedido.estado}
                 onChange={(e) => cambiarEstadoPedido(pedido._id, e.target.value)}
               >
@@ -151,22 +111,19 @@ const Pedidos = () => {
               {pedido.pedido &&
                 pedido.pedido.map((articulo) => (
                   <div key={articulo.producto._id} className="mt-4">
-                    <p className="text-sm text-gray-600">
-                      Producto: {articulo.producto.nombreProducto}
-                    </p>
+                    <p className="text-sm text-gray-600">Producto: {articulo.producto.nombreProducto}</p>
                     <p className="text-sm text-gray-600">Cantidad: {articulo.cantidad}</p>
                   </div>
                 ))}
 
-              <p className="text-gray-800 mt-3 font-bold">
-                Total a pagar: <span className="font-light"> Gs. {pedido.total}</span>
-              </p>
+              <p className="text-gray-800 mt-3 font-bold">Total a pagar: <span className="font-light">Gs. {pedido.total}</span></p>
+              <p className="text-gray-600 text-xs mt-2">IVA (10%): <span className="font-light">Gs. {pedido.IVA}</span></p>
 
               <button
-                className="uppercase text-xs font-bold block mx-auto mt-4 bg-red-800 px-3 py-2 text-white rounded"
+                className="uppercase text-xs font-bold flex justify-center items-center gap-2 mx-auto mt-4 bg-red-800 px-3 py-2 text-white rounded hover:bg-red-700 transition-colors duration-300"
                 onClick={() => confirmarEliminarPedido(pedido._id)}
               >
-                <RiDeleteBin5Line color="white" size={20} />
+                <RiDeleteBin5Line size={20} /> Eliminar
               </button>
             </div>
           </div>
@@ -175,10 +132,10 @@ const Pedidos = () => {
         {Array.from({ length: totalPages }, (_, index) => (
           <button
             key={index + 1}
-            onClick={() => setCurrentPage(index + 1)}
+            onClick={() => handlePageChange(index + 1)}
             className={`mx-2 px-4 py-2 text-sm ${
               currentPage === index + 1 ? 'bg-gray-800 text-white' : 'bg-gray-300 text-gray-800'
-            } rounded`}
+            } rounded hover:bg-gray-700 transition-colors duration-300`}
           >
             {index + 1}
           </button>

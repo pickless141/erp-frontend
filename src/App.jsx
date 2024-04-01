@@ -10,7 +10,6 @@ import NuevoCliente from './views/clientes/NuevoCliente'
 import Producciones from './views/producciones/Producciones'
 import NuevaTienda from './views/tiendas/NuevaTienda'
 import NuevaProduccion from './views/producciones/NuevaProduccion'
-import NuevoPedido from './views/pedidos/NuevoPedido'
 import ClienteTiendaDetail from './views/clientes/ClienteTiendaDetail'
 import EditarCliente from './views/clientes/EditarCliente'
 import EditarTienda from './views/tiendas/EditarTienda'
@@ -20,6 +19,11 @@ import NuevoProducto from './views/productos/NuevoProducto'
 import EditarProducto from './views/productos/EditarProducto'
 import EditarInsumo from './views/insumos/EditarInsumo'
 import NuevoInsumo from './views/insumos/NuevoInsumo'
+import Detalle from './views/reposiciones/Detalle'
+import DetalleTienda from './views/tiendas/DetalleTienda'
+import PedidoForm from './views/tiendas/PedidoForm'
+import ReposicionesTienda from './views/tiendas/ReposicionesTienda'
+import DetalleReposicion from './views/tiendas/DetalleReposicion'
 
 function App() {
   
@@ -34,15 +38,19 @@ function App() {
       <Route path='/editarcliente/:clienteId' element={<EditarCliente />} />
       
       <Route path='/pedidos' element={<Pedidos/>}/>
-      <Route path='/nuevopedido' element={<NuevoPedido/>}/>
 
       <Route path='/tiendas' element={<Tiendas/>}/>
       <Route path='/nuevatienda' element={<NuevaTienda/>}/>
       <Route path='/editartienda/:tiendaId' element={<EditarTienda/>}/>
+      <Route path='/tiendas/:id/detalle' element={<DetalleTienda/>}/>
+      <Route path='/reposiciones/tienda/:tiendaId' element={<ReposicionesTienda/>}/>
+      <Route path="/reposiciones/:reposicionId/detalles-productos" element={<DetalleReposicion />} />
+      <Route path="/hacerpedido/:tiendaId" element={<PedidoForm />} />
       
       
       <Route path='/reposiciones' element={<Reposiciones/>}/>
       <Route path='/nuevoregistro' element={<NuevoRegistro/>}/>
+      <Route path='/detail/:reposicionId' element={<Detalle/>}/>
       
       
       <Route path='/productos' element={<Productos/>}/>
@@ -62,3 +70,4 @@ function App() {
 }
 
 export default App
+
