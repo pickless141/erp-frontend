@@ -49,6 +49,11 @@ const Tiendas = () => {
     });
   }, [eliminarItem, fetchTiendas, currentPage, searchTerm]);
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    fetchTiendas(page, searchTerm);
+  };
+
   const handleEditarTiendaClick = (tiendaId) => {
     if (tiendaId) {
       setTiendaEditarId(tiendaId);
