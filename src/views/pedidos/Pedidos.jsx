@@ -86,7 +86,7 @@ const Pedidos = () => {
             className="border-t-4 mt-4 bg-white rounded p-6 md:grid md:grid-cols-2 md:gap-4 shadow-lg"
           >
             <div>
-              <p className="font-bold text-gray-800">Cliente: {pedido.tienda.nombreCliente}</p>
+              <p className="font-bold text-gray-800">Cliente: {pedido.tienda?.nombreCliente}</p>
               {pedido.tienda.nombreTienda && <p className="flex items-center my-2">{pedido.tienda.nombreTienda}</p>}
               {pedido.tienda.direccion && <p className="flex items-center my-2">{pedido.tienda.direccion}</p>}
 
