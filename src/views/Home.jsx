@@ -111,7 +111,6 @@ const Home = () => {
             <tr>
               <th className="px-4 py-3">Nombre</th>
               <th className="px-4 py-3">Ruc</th>
-              <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Tiendas</th>
               <th className="px-4 py-3">Editar</th>
               <th className="px-4 py-3">Eliminar</th>
@@ -124,7 +123,6 @@ const Home = () => {
               <tr key={index} className="hover:bg-gray-100">
                 <td className="border px-4 py-2">{cliente.nombre}</td>
                 <td className="border px-4 py-2">{cliente.ruc}</td>
-                <td className="border px-4 py-2">{cliente.email}</td>
                 <td className="border px-4 py-2">
                   <Link
                     to={`/home/${cliente._id}`}

@@ -7,7 +7,6 @@ const EditarCliente = () => {
   const { clienteId } = useParams();
   const [cliente, setCliente] = useState({
     nombre: '',
-    email: '',
     ruc: '',
     telefono: '',
   });
@@ -121,20 +120,6 @@ const EditarCliente = () => {
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               onChange={handleInputChange}
               value={cliente.nombre}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-              Email:
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={handleInputChange}
-              value={cliente.email}
               required
             />
           </div>
