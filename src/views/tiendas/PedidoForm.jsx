@@ -49,7 +49,6 @@ const PedidoForm = () => {
   };
 
   const handleConfirmarPedido = async () => {
-    // Muestra el SweetAlert para confirmación
     const result = await Swal.fire({
       title: '¿Desea confirmar el pedido?',
       text: 'Esta acción no se puede deshacer.',
@@ -61,15 +60,12 @@ const PedidoForm = () => {
       cancelButtonText: 'Cancelar',
     });
   
-    // Si el usuario confirma la acción
     if (result.isConfirmed) {
-      // Filtrar los productos que tienen cantidad mayor a cero
       const pedidoParaEnviar = pedido.filter((item) => item.cantidad > 0).map(item => ({
         productoId: item.productoId,
         cantidad: item.cantidad,
       }));
   
-      // Verificar que el pedido no esté vacío
       if (pedidoParaEnviar.length === 0) {
         Swal.fire(
           'Pedido vacío',
@@ -79,7 +75,6 @@ const PedidoForm = () => {
         return;
       }
   
-      // Realizar la petición al servidor
       try {
         const response = await fetch(`${apiUrl}/pedidos`, {
           method: 'POST',
@@ -89,11 +84,10 @@ const PedidoForm = () => {
           },
           body: JSON.stringify({
             tiendaId,
-            pedido: pedidoParaEnviar,
+            productos: pedidoParaEnviar,
           }),
         });
   
-        // Procesar respuesta
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || 'Error al enviar el pedido');
