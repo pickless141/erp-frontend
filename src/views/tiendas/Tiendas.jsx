@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Layout from '../../components/Layout';
+import Pagination from '../../components/Pagination';
 import EditarTienda from './EditarTienda';
 import useStore from '../../store';
 import { FaEdit, FaShoppingCart, FaTrash } from "react-icons/fa";
@@ -17,13 +18,14 @@ const Tiendas = () => {
     setSearchTerm: state.setSearchTerm,
     setCurrentPage: state.setCurrentPage,
   }));
-  
+
+  const { docs, totalDocs, limit } = tiendas;
   const [tiendaEditarId, setTiendaEditarId] = useState(null);
 
   useEffect(() => {
     fetchTiendas(currentPage, searchTerm);
-  }, [currentPage, searchTerm, fetchTiendas])
-  
+  }, [currentPage, searchTerm, fetchTiendas]);
+
   const confirmarEliminarTienda = useCallback((tiendaId) => {
     Swal.fire({
       title: '¿Estás seguro?',
@@ -49,29 +51,24 @@ const Tiendas = () => {
     });
   }, [eliminarItem, fetchTiendas, currentPage, searchTerm]);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    fetchTiendas(page, searchTerm);
+  const handleEditarTiendaClick = (tiendaId) => {
+    setTiendaEditarId(tiendaId);
+    navigate(`/editartienda/${tiendaId}`);
   };
 
-  const handleEditarTiendaClick = (tiendaId) => {
-    if (tiendaId) {
-      setTiendaEditarId(tiendaId);
-      navigate(`/editartienda/${tiendaId}`);
-    } else {
-      console.error('tiendaId es undefined');
-    }
-  };
   const handlePedidoClick = (tiendaId) => {
     navigate(`/hacerpedido/${tiendaId}`);
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    fetchTiendas(newPage, searchTerm); 
   };
 
   const handleSearchChange = useCallback((e) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
   }, [setSearchTerm, setCurrentPage]);
-
-  const pageCount = Math.ceil(tiendas.totalDocs / tiendas.limit);
 
   return (
     <Layout>
@@ -97,6 +94,7 @@ const Tiendas = () => {
           <thead className="bg-gray-800 text-white">
             <tr>
               <th className="px-4 py-3">Tienda</th>
+              <th className="px-4 py-3">Pedidos</th>
               <th className="px-4 py-3">Reposiciones</th>
               <th className="px-4 py-3">Detalle</th>
               <th className="px-4 py-3">Editar</th>
@@ -106,9 +104,14 @@ const Tiendas = () => {
           </thead>
 
           <tbody className="bg-white">
-            {tiendas.docs.map((tienda, index) => (
+            {docs.map((tienda, index) => (
               <tr key={index} className="hover:bg-gray-100">
                 <td className="border px-4 py-2">{tienda.nombreTienda}</td>
+                <td className="border px-4 py-2 text-center">
+                  <Link to={`/pedidos/tienda/${tienda._id}`} className="text-blue-500 hover:underline">
+                    Ver Pedidos
+                  </Link>
+                </td>
                 <td className="border px-4 py-2">
                   <Link to={`/reposiciones/tienda/${tienda._id}`} className="text-blue-500 hover:underline">
                     Reposiciones
@@ -149,21 +152,13 @@ const Tiendas = () => {
         </table>
       </div>
 
-      {pageCount > 1 && (
-        <div className="flex justify-center mt-4">
-          {[...Array(pageCount)].map((_, index) => (
-            <button
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
-              className={`mx-1 px-3 py-1 rounded ${
-                currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300'
-              }`}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
-      )}
+      <Pagination
+        currentPage={currentPage}
+        pageCount={Math.ceil(totalDocs / limit)}
+        onPageChange={handlePageChange}
+        totalDocs={totalDocs}
+        limit={limit}
+      />
 
       {tiendaEditarId && <EditarTienda tiendaId={tiendaEditarId} />}
     </Layout>

@@ -1,29 +1,39 @@
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { RiDeleteBin5Line } from 'react-icons/ri';
 import Swal from 'sweetalert2';
 import Layout from '../../components/Layout';
+import Pagination from '../../components/Pagination';
 import useStore from '../../store';
 
 const Pedidos = () => {
-  const { pedidos, fetchPedidos, eliminarItem, currentPage, setCurrentPage,totalPages } = useStore((state) => ({
-    pedidos: state.pedidos.docs,
+  const {
+    pedidos,
+    fetchPedidos,
+    eliminarItem,
+    currentPage,
+    setCurrentPage,
+    updatePedidoEstado
+  } = useStore(state => ({
+    pedidos: state.pedidos,
     fetchPedidos: state.fetchPedidos,
     eliminarItem: state.eliminarItem,
-    currentPage: state.pedidos.currentPage,
+    currentPage: state.currentPage,
     setCurrentPage: state.setCurrentPage,
-    totalPages: state.pedidos.totalPages,
+    updatePedidoEstado: state.updatePedidoEstado
   }));
+
+  const { docs, totalDocs, limit } = pedidos;
+  const totalPages = Math.ceil(totalDocs / limit);
 
   useEffect(() => {
     fetchPedidos(currentPage);
   }, [currentPage, fetchPedidos]);
-  
-  const { updatePedidoEstado } = useStore();
-  
+
   const cambiarEstadoPedido = (pedidoId, nuevoEstado) => {
     const token = localStorage.getItem('token');
     const apiUrl = import.meta.env.VITE_API_SERVER;
-  
+
     fetch(`${apiUrl}/pedidos/${pedidoId}/cambiarEstado`, {
       method: 'PUT',
       headers: {
@@ -32,7 +42,7 @@ const Pedidos = () => {
       },
       body: JSON.stringify({ nuevoEstado }), 
     })
-    .then(response => Promise.all([response.ok, response.json()])) 
+    .then(response => Promise.all([response.ok, response.json()]))
     .then(([ok, data]) => {
       if (!ok) {
         throw new Error(data.error || 'Error al actualizar el estado del pedido');
@@ -70,23 +80,33 @@ const Pedidos = () => {
     });
   };
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    fetchPedidos(page);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
   };
-
+  
   return (
     <Layout>
       <h1 className="text-2xl text-gray-800 font-light mb-4">Pedidos</h1>
 
-      {pedidos &&
-        pedidos.map((pedido) => (
+      <div className="flex justify-between items-center mb-6">
+        <Link
+          to="/nuevopedido" 
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Nuevo Pedido
+        </Link>
+      </div>
+
+      {docs &&
+        docs.map((pedido) => (
           <div
             key={pedido._id}
             className="border-t-4 mt-4 bg-white rounded p-6 md:grid md:grid-cols-2 md:gap-4 shadow-lg"
           >
             <div>
-              <p className="font-bold text-gray-800">Cliente: {pedido.tienda?.nombreCliente}</p>
+              <p className="font-bold text-gray-800">Cliente: {pedido.tienda.nombreCliente}</p>
               {pedido.tienda.nombreTienda && <p className="flex items-center my-2">{pedido.tienda.nombreTienda}</p>}
               {pedido.tienda.direccion && <p className="flex items-center my-2">{pedido.tienda.direccion}</p>}
 
@@ -104,6 +124,7 @@ const Pedidos = () => {
                 <option value="PENDIENTE">PENDIENTE</option>
                 <option value="CANCELADO">CANCELADO</option>
               </select>
+              <p className="text-gray-600 mt-2">Registrado por: {pedido.usuario.nombre} {pedido.usuario.apellido}</p>
             </div>
 
             <div>
@@ -128,18 +149,15 @@ const Pedidos = () => {
             </div>
           </div>
         ))}
-      <div className="flex justify-center mt-4">
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index + 1}
-            onClick={() => handlePageChange(index + 1)}
-            className={`mx-2 px-4 py-2 text-sm ${
-              currentPage === index + 1 ? 'bg-gray-800 text-white' : 'bg-gray-300 text-gray-800'
-            } rounded hover:bg-gray-700 transition-colors duration-300`}
-          >
-            {index + 1}
-          </button>
-        ))}
+      <div className="mt-8">
+      <Pagination
+        currentPage={currentPage}
+        pageCount={totalPages}
+        onPageChange={handlePageChange}
+        totalDocs={totalDocs}
+        limit={limit}
+      />
+        
       </div>
     </Layout>
   );

@@ -106,43 +106,35 @@ const useStore = create((set) => ({
     },
      
     //Estado para los pedidos
-    pedidos: { docs: [], totalDocs: 0, limit: 3, totalPages: 0, currentPage: 1 },
+    pedidos: { docs: [], totalDocs: 0, limit: 3 },
     fetchPedidos: async (page = 1) => {
         const apiUrl = import.meta.env.VITE_API_SERVER;
         const token = localStorage.getItem('token');
 
         try {
-            const response = await axios.get(`${apiUrl}/pedidos/?page=${page}&perPage=3`, {
-                headers: {
-                    'x-auth-token': token,
-                },
-            });
+        const response = await axios.get(`${apiUrl}/pedidos/?page=${page}&perPage=3`, {
+            headers: {
+            'x-auth-token': token,
+            },
+        });
 
-            if (response.status !== 200) {
-                throw new Error('Error al obtener los pedidos');
-            }
-            const { pedidos, totalPedidos } = response.data;
-            const totalPages = Math.ceil(totalPedidos / 3); 
+        if (response.status !== 200) {
+            throw new Error('Error al obtener los pedidos');
+        }
+        const { docs, totalDocs, limit } = response.data;
 
-            set({ 
-                pedidos: { 
-                    docs: pedidos, 
-                    totalDocs: totalPedidos, 
-                    limit: 3, 
-                    totalPages, 
-                    currentPage: page 
-                } 
-            }); 
+        set({ pedidos: { docs, totalDocs, limit } });
+        console.log("Pedidos cargados:", docs);
         } catch (error) {
-            console.error('Error al obtener los pedidos:', error);
+        console.error('Error al obtener los pedidos:', error);
         }
     },
     updatePedidoEstado: (pedidoId, nuevoEstado) => set((state) => {
         const updatedPedidos = state.pedidos.docs.map((pedido) => {
-          if (pedido._id === pedidoId) {
+        if (pedido._id === pedidoId) {
             return { ...pedido, estado: nuevoEstado };
-          }
-          return pedido;
+        }
+        return pedido;
         });
         return { pedidos: { ...state.pedidos, docs: updatedPedidos } };
     }),

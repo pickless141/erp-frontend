@@ -156,16 +156,16 @@ const EditarCliente = () => {
             >
               Actualizar Cliente
             </button>
+            <button
+                onClick={() => {
+                  navigate('/home');
+                }}
+                className="bg-gray-300 flex items-end hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-auto"
+              >
+                Volver
+              </button>
           </div>
         </form>
-        <button
-            onClick={() => {
-              navigate('/home');
-            }}
-            className="bg-gray-300 flex items-end hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-auto"
-          >
-            Volver
-          </button>
       </div>
     </Layout>
   );

@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import useStore from '../../store';
 import Layout from '../../components/Layout';
+import Pagination from '../../components/Pagination';
 import EditarInsumo from './EditarInsumo';
 //
 const Insumos = () => {
@@ -122,21 +123,13 @@ const Insumos = () => {
         </table>
       </div>
 
-      {pageCount > 1 && (
-        <div className="flex justify-center mt-4">
-          {[...Array(pageCount)].map((_, index) => (
-            <button
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
-              className={`mx-1 px-3 py-1 rounded ${
-                currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'
-              }`}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
-      )}
+      <Pagination
+          currentPage={currentPage}
+          pageCount={pageCount}
+          onPageChange={handlePageChange}
+          totalDocs={insumos?.totalDocs || 0}
+          limit={insumos?.limit || 1}
+      />
 
       {insumoEditarId && <EditarInsumo insumoId={insumoEditarId} />}
     </Layout>

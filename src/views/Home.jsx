@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import Pagination from '../components/Pagination';
 import ClienteTiendaDetail from './clientes/ClienteTiendaDetail';
 import EditarCliente from './clientes/EditarCliente';
 import useStore from '../store';
@@ -75,9 +76,10 @@ const Home = () => {
     }
   };
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    fetchClientes(newPage, searchTerm);
+};
 
   const handleSearch = (term) => {
     setSearchTerm(term);
@@ -111,6 +113,7 @@ const Home = () => {
             <tr>
               <th className="px-4 py-3">Nombre</th>
               <th className="px-4 py-3">Ruc</th>
+              <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Tiendas</th>
               <th className="px-4 py-3">Editar</th>
               <th className="px-4 py-3">Eliminar</th>
@@ -123,6 +126,7 @@ const Home = () => {
               <tr key={index} className="hover:bg-gray-100">
                 <td className="border px-4 py-2">{cliente.nombre}</td>
                 <td className="border px-4 py-2">{cliente.ruc}</td>
+                <td className="border px-4 py-2">{cliente.email}</td>
                 <td className="border px-4 py-2">
                   <Link
                     to={`/home/${cliente._id}`}
@@ -154,21 +158,13 @@ const Home = () => {
         </table>
       </div>
 
-      {pageCount > 1 && (
-        <div className="flex justify-center mt-4">
-          {[...Array(pageCount)].map((_, index) => (
-            <button
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
-              className={`mx-1 px-3 py-1 rounded ${
-                currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300'
-              } transition-colors duration-300`}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
-      )}
+      <Pagination
+        currentPage={currentPage}
+        pageCount={Math.ceil(clientes.totalDocs / clientes.limit)}
+        onPageChange={handlePageChange}
+        totalDocs={clientes.totalDocs}
+        limit={clientes.limit}
+      />
 
       {clienteSeleccionado && <ClienteTiendaDetail clienteId={clienteSeleccionado} />}
       {clienteEditarId && <EditarCliente clienteId={clienteEditarId} />}

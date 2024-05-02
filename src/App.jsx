@@ -24,6 +24,9 @@ import DetalleTienda from './views/tiendas/DetalleTienda'
 import PedidoForm from './views/tiendas/PedidoForm'
 import ReposicionesTienda from './views/tiendas/ReposicionesTienda'
 import DetalleReposicion from './views/tiendas/DetalleReposicion'
+import NuevoPedido from './views/pedidos/NuevoPedido'
+import PedidosTienda from './views/tiendas/PedidosTienda'
+import DetallePedido from './views/tiendas/DetallePedido'
 
 function App() {
   
@@ -38,13 +41,16 @@ function App() {
       <Route path='/editarcliente/:clienteId' element={<EditarCliente />} />
       
       <Route path='/pedidos' element={<Pedidos/>}/>
+      <Route path='/nuevopedido' element={<NuevoPedido/>}/>
 
       <Route path='/tiendas' element={<Tiendas/>}/>
       <Route path='/nuevatienda' element={<NuevaTienda/>}/>
       <Route path='/editartienda/:tiendaId' element={<EditarTienda/>}/>
       <Route path='/tiendas/:id/detalle' element={<DetalleTienda/>}/>
       <Route path='/reposiciones/tienda/:tiendaId' element={<ReposicionesTienda/>}/>
+      <Route path='/pedidos/tienda/:tiendaId' element={<PedidosTienda/>}/>
       <Route path="/reposiciones/:reposicionId/detalles-productos" element={<DetalleReposicion />} />
+      <Route path="/pedidos/:pedidoId/resumenPedido" element={<DetallePedido />} />
       <Route path="/hacerpedido/:tiendaId" element={<PedidoForm />} />
       
       
@@ -70,4 +76,5 @@ function App() {
 }
 
 export default App
+
 

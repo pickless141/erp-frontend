@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../../components/Layout';
+import Pagination from '../../components/Pagination';
 import useStore from '../../store';
 import Swal from 'sweetalert2';
 import { FaTrash } from 'react-icons/fa'; 
@@ -105,21 +106,13 @@ const Reposiciones = () => {
         </table>
       </div>
 
-      {pageCount && currentPage && (
-        <div className="flex justify-center mt-4">
-          {Array.from({ length: pageCount }, (_, index) => (
-            <button
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
-              className={`mx-1 px-3 py-1 rounded ${
-                currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'
-              }`}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
-      )}
+      <Pagination
+        currentPage={currentPage}
+        pageCount={Math.ceil(reposiciones.totalDocs / reposiciones.limit)}
+        onPageChange={handlePageChange}
+        totalDocs={reposiciones.totalDocs}
+        limit={reposiciones.limit}
+      />
     </Layout>
   );
 };

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { FaTrash } from 'react-icons/fa';
 import Layout from '../../components/Layout';
+import Pagination from '../../components/Pagination';
 import { Link } from 'react-router-dom';
 import useStore from '../../store';
 
@@ -93,19 +94,13 @@ function Producciones() {
           </tbody>
         </table>
       </div>
-      <div className="flex justify-center mt-4">
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index + 1}
-            onClick={() => setCurrentPage(index + 1)}
-            className={`mx-1 px-4 py-2 rounded ${
-              currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-800'
-            } hover:bg-blue-700 transition-colors duration-300`}
-          >
-            {index + 1}
-          </button>
-        ))}
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        pageCount={totalPages}
+        onPageChange={setCurrentPage}
+        totalDocs={totalDocs}
+        limit={limit}
+      />  
     </Layout>
   );
 }
