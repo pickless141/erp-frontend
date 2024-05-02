@@ -35,7 +35,6 @@ const NuevoPedido = () => {
                 response.data.productos.forEach(producto => {
                     initialCantidades[producto._id] = '';
                 });
-                console.log(pedidoProductos)
                 setCantidades(initialCantidades);
             } catch (error) {
                 console.error('Error al cargar productos:', error);
