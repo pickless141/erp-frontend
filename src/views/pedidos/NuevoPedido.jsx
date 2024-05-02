@@ -29,11 +29,13 @@ const NuevoPedido = () => {
                 const response = await axios.get(`${apiUrl}/tiendas/${selectedOption.value}/detalle`, {
                     headers: { 'x-auth-token': token },
                 });
+                console.log(response.data.productos)
                 setProductos(response.data.productos || []);
                 const initialCantidades = {};
                 response.data.productos.forEach(producto => {
                     initialCantidades[producto._id] = '';
                 });
+                console.log(pedidoProductos)
                 setCantidades(initialCantidades);
             } catch (error) {
                 console.error('Error al cargar productos:', error);
