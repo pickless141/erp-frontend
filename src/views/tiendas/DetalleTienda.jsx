@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { MdAdd } from 'react-icons/md';
 import Layout from '../../components/Layout';
 import ProductoModal from './ProductoModal';
 
@@ -58,10 +57,10 @@ const DetalleTienda = () => {
             </ul>
             <div className="flex justify-between items-center mt-5">
           <Link to="/tiendas" className="px-5 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
-            Volver a Tiendas
+            Volver
           </Link>
           <button onClick={abrirModal} className="flex items-center px-5 py-3 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
-            <MdAdd className="mr-2" /> Nuevo Producto
+            Nuevo Producto
           </button>
         </div>
           </>

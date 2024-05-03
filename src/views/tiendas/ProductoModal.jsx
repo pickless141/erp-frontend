@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const ProductoModal = ({ onClose, tiendaId }) => {
   const [productos, setProductos] = useState([]);
@@ -55,7 +55,7 @@ const ProductoModal = ({ onClose, tiendaId }) => {
     });
 
     if (response.ok) {
-      onClose(); 
+      onClose();
     } else {
       const errorData = await response.json();
       console.error(errorData.error);
@@ -64,13 +64,13 @@ const ProductoModal = ({ onClose, tiendaId }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">
-      <div className="bg-white rounded-lg p-6 w-1/2">
+      <div className="bg-white rounded-lg p-6 w-full max-w-4xl mx-auto overflow-hidden">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Añadir Nuevo Producto</h3>
         <form onSubmit={guardarProducto} className="space-y-4">
           {productosSeleccionados.map((producto, index) => (
-            <div key={index} className="flex gap-3 items-center">
+            <div key={index} className="flex flex-wrap gap-3 items-center">
               <select
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm sm:text-base"
                 value={producto.productoId}
                 onChange={(e) => handleProductoChange(index, e.target.value)}
                 required
@@ -84,7 +84,7 @@ const ProductoModal = ({ onClose, tiendaId }) => {
               </select>
               <input
                 type="number"
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm sm:text-base"
                 value={producto.precio}
                 onChange={(e) => handlePrecioChange(index, e.target.value)}
                 required
@@ -93,14 +93,14 @@ const ProductoModal = ({ onClose, tiendaId }) => {
                 <button
                   type="button"
                   onClick={() => quitarProducto(index)}
-                  className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition-colors"
+                  className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition-colors text-sm sm:text-base"
                 >
                   X
                 </button>
               )}
             </div>
           ))}
-          <div className="flex justify-between mt-4">
+          <div className="flex flex-wrap justify-between mt-4 gap-2">
             <button
               type="button"
               onClick={añadirProducto}
