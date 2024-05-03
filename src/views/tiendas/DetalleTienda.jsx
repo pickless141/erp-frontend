@@ -25,7 +25,6 @@ const DetalleTienda = () => {
       }
 
       const data = await response.json();
-      console.log('Datos de la tienda:', data);
       setTienda(data);
     } catch (error) {
       console.error(error);

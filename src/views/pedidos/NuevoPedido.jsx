@@ -29,7 +29,6 @@ const NuevoPedido = () => {
                 const response = await axios.get(`${apiUrl}/tiendas/${selectedOption.value}/detalle`, {
                     headers: { 'x-auth-token': token },
                 });
-                console.log(response.data.productos)
                 setProductos(response.data.productos || []);
                 const initialCantidades = {};
                 response.data.productos.forEach(producto => {
@@ -57,8 +56,6 @@ const NuevoPedido = () => {
             cantidad: cantidades[producto._id] || 0
         })).filter(p => p.cantidad > 0);
     
-        console.log(pedidoProductos);  
-    
         if (pedidoProductos.length === 0) {
             Swal.fire('Advertencia', 'Debe agregar al menos un producto con cantidad mayor a cero.', 'warning');
             return;
@@ -77,7 +74,6 @@ const NuevoPedido = () => {
                 }
             });
     
-            console.log(response); 
             Swal.fire('Éxito', 'El pedido ha sido registrado exitosamente', 'success');
             navigate('/pedidos');
         } catch (error) {

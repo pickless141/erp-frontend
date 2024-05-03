@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 const ProductoModal = ({ onClose, tiendaId }) => {
-    console.log(tiendaId)
   const [productos, setProductos] = useState([]);
   const [productosSeleccionados, setProductosSeleccionados] = useState([{ productoId: '', precio: '' }]);
   const apiUrl = import.meta.env.VITE_API_SERVER;

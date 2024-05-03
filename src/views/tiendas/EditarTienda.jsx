@@ -103,7 +103,7 @@ const handleSubmit = async (e) => {
           body: JSON.stringify(datosParaActualizar),
       });
 
-      const responseData = await response.json(); // Obtener la respuesta del servidor
+      const responseData = await response.json(); 
 
       if (response.ok) {
           setExito('Tienda actualizada exitosamente');
