@@ -56,7 +56,7 @@ const DetalleTienda = () => {
               ))}
             </ul>
             <div className="flex justify-between items-center mt-5">
-          <Link to="/tiendas" className="px-5 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+          <Link to="/tiendas" className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
             Volver
           </Link>
           <button onClick={abrirModal} className="flex items-center px-5 py-3 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
