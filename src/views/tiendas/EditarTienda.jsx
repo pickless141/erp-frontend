@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 
 const EditarTienda = () => {
   const navigate = useNavigate();
@@ -52,7 +52,6 @@ const EditarTienda = () => {
         setLoading(false);
       }
     };
-  
     obtenerTienda();
   }, [tiendaId]);
 
@@ -62,173 +61,87 @@ const EditarTienda = () => {
   };
 
   const handlePrecioChange = (e, index) => {
-    const { value } = e.target;
     const updatedProductos = [...tienda.productos];
     updatedProductos[index].precio = parseFloat(value);
     setTienda({ ...tienda, productos: updatedProductos });
   };
 
   const handleDeleteProduct = (index) => {
-    const productoEliminado = tienda.productos[index];
-    setProductosEliminados((prevProductosEliminados) => [
-        ...prevProductosEliminados,
-        productoEliminado.id
-    ]);
-
     const updatedProductos = tienda.productos.filter((_, i) => i !== index);
+    setProductosEliminados([...productosEliminados, tienda.productos[index].id]);
     setTienda({ ...tienda, productos: updatedProductos });
-};
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  const datosParaActualizar = {
-      nombreCliente: tienda.nombreCliente,
-      nombreTienda: tienda.nombreTienda,
-      direccion: tienda.direccion,
-      descripcion: tienda.descripcion,
-      productos: tienda.productos, 
-      productosAEliminar: productosEliminados, 
   };
 
-  try {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
       const apiUrl = import.meta.env.VITE_API_SERVER;
       const token = localStorage.getItem('token');
       const response = await fetch(`${apiUrl}/tiendas/${tiendaId}`, {
-          method: 'PUT',
-          headers: {
-              'Content-Type': 'application/json',
-              'x-auth-token': token,
-          },
-          body: JSON.stringify(datosParaActualizar),
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token,
+        },
+        body: JSON.stringify({
+          nombreCliente: tienda.nombreCliente,
+          nombreTienda: tienda.nombreTienda,
+          direccion: tienda.direccion,
+          descripcion: tienda.descripcion,
+          productos: tienda.productos,
+          productosAEliminar: productosEliminados,
+        }),
       });
-
-      const responseData = await response.json(); 
-
       if (response.ok) {
-          setExito('Tienda actualizada exitosamente');
-          setTimeout(() => {
-              navigate('/tiendas');
-          }, 1000);
+        setExito('Tienda actualizada exitosamente');
+        setTimeout(() => navigate('/tiendas'), 1000);
       } else {
-          throw new Error(`Error al actualizar la tienda: ${responseData.message || 'Error desconocido'}`);
+        const errorData = await response.json();
+        throw new Error(`Error al actualizar la tienda: ${errorData.message}`);
       }
-  } catch (error) {
+    } catch (error) {
       console.error('Error al actualizar la tienda:', error);
       setError(error.message);
-  }
-};
+    }
+  };
 
-  if (loading) {
-    return (
-      <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-200 bg-opacity-75">
-        <div className="max-w-md bg-white p-8 rounded shadow-md text-center">
-          <p className="text-black font-bold uppercase text-2xl mb-4">Cargando datos de la tienda...</p>
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500 mx-auto"></div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return <p>Error al obtener los datos de la tienda: {error}</p>;
-  }
+  if (loading) return <p>Cargando datos de la tienda...</p>;
+  if (error) return <p>Error al obtener los datos de la tienda: {error}</p>;
 
   return (
     <Layout>
-      <div className="max-w-md mx-auto">
-        <h1 className="text-2xl text-gray-800 font-light mb-4">Editar Tienda</h1>
-
-        {exito && (
-          <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
-            {exito}
+      <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <h1 className="text-2xl font-semibold text-gray-800 mb-4">Editar Tienda</h1>
+        {exito && <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">{exito}</div>}
+        {error && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">{error}</div>}
+        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-6 pt-6 pb-8 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label htmlFor="nombreTienda" className="block text-sm font-medium text-gray-700">Nombre de la Tienda:</label>
+              <input type="text" name="nombreTienda" id="nombreTienda" required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value={tienda.nombreTienda} onChange={handleInputChange} />
+              <label htmlFor="direccion" className="block text-sm font-medium text-gray-700">Dirección:</label>
+              <input type="text" name="direccion" id="direccion" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value={tienda.direccion} onChange={handleInputChange} />
+              <label htmlFor="descripcion" className="block text-sm font-medium text-gray-700">Descripción:</label>
+              <input type="text" name="descripcion" id="descripcion" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value={tienda.descripcion} onChange={handleInputChange} />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800 mb-3">Productos:</h2>
+              {tienda.productos.map((producto, index) => (
+                <div key={producto.id} className="mb-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700 mr-3">{producto.nombre} - Gs. {producto.precio}</span>
+                    <input type="number" value={producto.precio} onChange={(e) => handlePrecioChange(e, index)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                  </div>
+                  <button type="button" onClick={() => handleDeleteProduct(index)} className="mt-2 text-red-500 hover:text-red-700">Eliminar</button>
+                </div>
+              ))}
+            </div>
           </div>
-        )}
-        {error && (
-          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
-            {error}
-          </div>
-        )}
-        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="nombreTienda">
-              Nombre de la Tienda:
-            </label>
-            <input
-              type="text"
-              id="nombreTienda"
-              name="nombreTienda"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={handleInputChange}
-              value={tienda.nombreTienda}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="direccion">
-              Dirección:
-            </label>
-            <input
-              type="text"
-              id="direccion"
-              name="direccion"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={handleInputChange}
-              value={tienda.direccion}
-            />
-          </div>
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="descripcion">
-              Descripción:
-            </label>
-            <input
-              type="text"
-              id="descripcion"
-              name="descripcion"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={handleInputChange}
-              value={tienda.descripcion}
-            />
-          </div>
-          <div className="mb-6">
-            <h2 className="text-xl font-bold mb-2">Productos:</h2>
-            {tienda.productos.map((producto, index) => (
-  <div key={producto.id} className="mb-4">
-    <span>{producto.nombre}</span> - Gs. {producto.precio}
-    <input
-      type="number"
-      value={producto.precio}
-      onChange={(e) => handlePrecioChange(e, index)}
-      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-      required
-    />
-    <button
-      type="button"
-      onClick={() => handleDeleteProduct(index)}
-      className="ml-2 text-red-600"
-    >
-      Eliminar
-    </button>
-  </div>
-))}
-          </div>
-          <div className="flex items-center justify-between">
-            <button
-              type="submit"
-              className="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Actualizar Tienda
-            </button>
+          <div className="flex items-center justify-end mt-4">
+            <button type="submit" className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Actualizar</button>
+            <Link to="/tiendas" className="ml-4 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Volver</Link>
           </div>
         </form>
-        <button
-          onClick={() => {
-            navigate('/tiendas');
-          }}
-          className="bg-gray-300 flex items-end hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-auto"
-        >
-          Volver
-        </button>
       </div>
     </Layout>
   );
