@@ -20,12 +20,7 @@ const ResumenPedidoModal = ({ isOpen, closeModal, pedidoId }) => {
           'x-auth-token': token,
         },
       })
-        .then(response => {
-          if (!response.ok) {
-            return response.text().then(text => { throw new Error(text) });
-          }
-          return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
           if (data.error) {
             Swal.fire('Error', data.error, 'error');
@@ -36,12 +31,20 @@ const ResumenPedidoModal = ({ isOpen, closeModal, pedidoId }) => {
           setLoading(false);
         })
         .catch(error => {
-          console.error('Error fetching resumen del pedido:', error.message);
+          console.error('Error fetching resumen del pedido:', error);
           Swal.fire('Error', 'Error al cargar el resumen del pedido', 'error');
           setLoading(false);
         });
     }
   }, [isOpen, pedidoId]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setProductos([]);
+      setNombreTienda('');
+      setLoading(true);
+    }
+  }, [isOpen]);
 
   return (
     <Dialog open={isOpen} onClose={closeModal} className="fixed z-10 inset-0 overflow-y-auto">
