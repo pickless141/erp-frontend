@@ -16,7 +16,6 @@ const NuevoPedido = () => {
     const [productos, setProductos] = useState([]);
     const [cantidades, setCantidades] = useState({});
     const [descripcion, setDescripcion] = useState('');
-    const [fechaEntrega, setFechaEntrega] = useState('');
 
     useEffect(() => {
         fetchTiendaSelect();
@@ -66,11 +65,10 @@ const NuevoPedido = () => {
         try {
             const token = localStorage.getItem('token');
             const apiUrl = import.meta.env.VITE_API_SERVER;
-            const response = await axios.post(`${apiUrl}/pedidos/vendedor`, {
+            await axios.post(`${apiUrl}/pedidos/vendedor`, {
                 tiendaId: tienda.value,
                 productos: pedidoProductos,
-                descripcion,
-                fechaEntrega
+                descripcion
             }, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -127,15 +125,6 @@ const NuevoPedido = () => {
                             onChange={(e) => setDescripcion(e.target.value)}
                             rows={3}
                             className="mt-1 w-full p-2 border rounded focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500"
-                        />
-                    </div>
-                    <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700">Fecha de Entrega (opcional):</label>
-                        <input
-                            type="date"
-                            value={fechaEntrega}
-                            onChange={(e) => setFechaEntrega(e.target.value)}
-                            className="mt-1 p-2 border rounded focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500"
                         />
                     </div>
                     <div className="flex justify-between mt-4">

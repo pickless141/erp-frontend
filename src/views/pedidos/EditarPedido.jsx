@@ -13,7 +13,6 @@ const EditarPedido = () => {
   const [productosTienda, setProductosTienda] = useState([]);
   const [cantidades, setCantidades] = useState({});
   const [descripcion, setDescripcion] = useState('');
-  const [fechaEntrega, setFechaEntrega] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -26,7 +25,6 @@ const EditarPedido = () => {
         });
         const pedido = response.data.pedido;
         setDescripcion(pedido.descripcion || '');
-        setFechaEntrega(pedido.fechaEntrega ? new Date(pedido.fechaEntrega).toISOString().substring(0, 10) : '');
         setProductos(pedido.pedido);
         cantidadesIniciales(pedido.pedido);
         cargarProductosTienda(pedido.tienda._id);
@@ -94,7 +92,6 @@ const EditarPedido = () => {
       await axios.put(`${apiUrl}/pedidos/editar/${pedidoId}`, {
         descripcion: descripcion || '',
         productos: pedidoProductos,
-        fechaEntrega: fechaEntrega || null
       }, {
         headers: {
           'Content-Type': 'application/json',
@@ -122,15 +119,6 @@ const EditarPedido = () => {
               rows={3}
               placeholder="Sin descripción"
               className="mt-1 w-full p-2 border rounded focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700">Fecha de Entrega (opcional):</label>
-            <input
-              type="date"
-              value={fechaEntrega}
-              onChange={(e) => setFechaEntrega(e.target.value)}
-              className="mt-1 w-40 p-2 border rounded focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
           {productos.length > 0 && (

@@ -173,11 +173,9 @@ const Pedidos = () => {
 
               <p className="text-gray-800 mt-2 font-bold">Descripción:</p>
               <p className="text-gray-600 mt-2">{pedido.descripcion || 'Sin descripción'}</p>
-
-              
             </div>
 
-            <div className="flex flex-col items-end">
+            <div className="flex flex-col items-end space-y-2">
               <Menu as="div" className="relative inline-block text-left">
                 <div>
                   <Menu.Button className="inline-flex justify-center w-full p-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-full hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
@@ -227,14 +225,12 @@ const Pedidos = () => {
                 </Menu.Items>
               </Menu>
 
-              <p className="text-gray-800 mt-3 font-bold">Total a pagar: <span className="font-light">Gs. {pedido.total}</span></p>
-              <p className="text-gray-600 text-xs mt-2">IVA (10%): <span className="font-light">Gs. {pedido.IVA}</span></p>
-              {pedido.fechaEntrega && (
-                <p className="text-gray-600 text-xs mt-2">
-                  Fecha de Entrega: <span className="font-light">{new Date(pedido.fechaEntrega).toLocaleDateString()}</span>
-                </p>
-              )}
-              <p className="text-gray-600 mt-2 text-xs">
+              <div className="text-right">
+                <p className="text-gray-800 font-bold">Total a pagar:</p>
+                <p className="font-light">Gs. {pedido.total}</p>
+                <p className="text-gray-600 text-xs">IVA (10%): Gs. {pedido.IVA}</p>
+              </div>
+              <p className="text-gray-600 text-xs">
                 Registrado por: {pedido.usuario.nombre} {pedido.usuario.apellido}
               </p>
             </div>
