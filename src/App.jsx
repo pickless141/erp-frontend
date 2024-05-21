@@ -27,6 +27,7 @@ import DetalleReposicion from './views/tiendas/DetalleReposicion'
 import NuevoPedido from './views/pedidos/NuevoPedido'
 import PedidosTienda from './views/tiendas/PedidosTienda'
 import DetallePedido from './views/tiendas/DetallePedido'
+import EditarPedido from './views/pedidos/EditarPedido'
 
 function App() {
   
@@ -42,6 +43,7 @@ function App() {
       
       <Route path='/pedidos' element={<Pedidos/>}/>
       <Route path='/nuevopedido' element={<NuevoPedido/>}/>
+      <Route path='/editar/:pedidoId' element={<EditarPedido/>}/>
 
       <Route path='/tiendas' element={<Tiendas/>}/>
       <Route path='/nuevatienda' element={<NuevaTienda/>}/>

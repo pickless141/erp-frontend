@@ -15,9 +15,11 @@ const NuevoPedido = () => {
     const [tienda, setTienda] = useState(null);
     const [productos, setProductos] = useState([]);
     const [cantidades, setCantidades] = useState({});
+    const [descripcion, setDescripcion] = useState('');
+    const [fechaEntrega, setFechaEntrega] = useState('');
 
     useEffect(() => {
-        fetchTiendaSelect();  
+        fetchTiendaSelect();
     }, [fetchTiendaSelect]);
 
     const handleTiendaChange = async (selectedOption) => {
@@ -52,28 +54,30 @@ const NuevoPedido = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const pedidoProductos = productos.map(producto => ({
-            productoId: producto._id, 
+            productoId: producto._id,
             cantidad: cantidades[producto._id] || 0
         })).filter(p => p.cantidad > 0);
-    
+
         if (pedidoProductos.length === 0) {
             Swal.fire('Advertencia', 'Debe agregar al menos un producto con cantidad mayor a cero.', 'warning');
             return;
         }
-    
+
         try {
             const token = localStorage.getItem('token');
             const apiUrl = import.meta.env.VITE_API_SERVER;
             const response = await axios.post(`${apiUrl}/pedidos/vendedor`, {
                 tiendaId: tienda.value,
-                productos: pedidoProductos
+                productos: pedidoProductos,
+                descripcion,
+                fechaEntrega
             }, {
                 headers: {
                     'Content-Type': 'application/json',
                     'x-auth-token': token,
                 }
             });
-    
+
             Swal.fire('Éxito', 'El pedido ha sido registrado exitosamente', 'success');
             navigate('/pedidos');
         } catch (error) {
@@ -85,7 +89,7 @@ const NuevoPedido = () => {
     return (
         <Layout>
             <div className="max-w-4xl mx-auto px-4 py-6">
-                <h1 className="text-xl font-semibold text-gray-800 mb-4">Nuevo Pedido</h1>
+                <h1 className="text-2xl font-semibold text-gray-800 mb-4">Nuevo Pedido</h1>
                 <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-6">
                     <div className="mb-6">
                         <label className="block text-sm font-medium text-gray-700">Tienda:</label>
@@ -98,32 +102,51 @@ const NuevoPedido = () => {
                             className="mt-1"
                         />
                     </div>
+                    
                     {productos.length > 0 && (
+                        <div className="mb-6">
+                            <h2 className="text-lg font-semibold text-gray-800">Productos</h2>
+                            {productos.map((producto, index) => (
+                                <div key={producto._id || index} className="flex justify-between items-center mt-4">
+                                    <span className="text-gray-700">{producto.nombreProducto}</span>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        value={cantidades[producto._id] || ''}
+                                        onChange={e => handleCantidadChange(producto._id, e.target.value)}
+                                        className="w-24 p-2 border rounded focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    )}
                     <div className="mb-6">
-                        <h2 className="text-lg font-semibold text-gray-800">Productos</h2>
-                        {productos.map((producto, index) => (
-                            <div key={producto._id || index} className="flex justify-between items-center mt-4">
-                                <span className="text-gray-700">{producto.nombre}</span>
-                                <input
-                                    type="number"
-                                    min="0"
-                                    value={cantidades[producto._id] || ''}
-                                    onChange={e => handleCantidadChange(producto._id, e.target.value)}
-                                    className="w-24 p-2 border rounded"
-                                />
-                            </div>
-                        ))}
+                        <label className="block text-sm font-medium text-gray-700">Descripción:</label>
+                        <textarea
+                            value={descripcion}
+                            onChange={(e) => setDescripcion(e.target.value)}
+                            rows={3}
+                            className="mt-1 w-full p-2 border rounded focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500"
+                        />
                     </div>
-                )}
+                    <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-700">Fecha de Entrega (opcional):</label>
+                        <input
+                            type="date"
+                            value={fechaEntrega}
+                            onChange={(e) => setFechaEntrega(e.target.value)}
+                            className="mt-1 p-2 border rounded focus:outline-none focus:ring focus:ring-indigo-500 focus:border-indigo-500"
+                        />
+                    </div>
                     <div className="flex justify-between mt-4">
                         <Link
-                            to="/pedidos" 
+                            to="/pedidos"
                             className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         >
                             Volver
                         </Link>
                         <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-                            Registrar Pedido
+                            Registrar 
                         </button>
                     </div>
                 </form>
