@@ -13,7 +13,7 @@ const DetallePedido = () => {
             try {
                 const token = localStorage.getItem('token');
                 const apiUrl = import.meta.env.VITE_API_SERVER;
-                const response = await axios.get(`${apiUrl}/pedidos/${pedidoId}/resumenPedido`, {
+                const response = await axios.get(`${apiUrl}/pedidos/${pedidoId}/resumen`, {
                     headers: { 'x-auth-token': token }
                 });
                 setProductos(response.data.pedidos);
