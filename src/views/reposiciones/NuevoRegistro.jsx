@@ -6,8 +6,10 @@ import Layout from '../../components/Layout';
 import useStore from '../../store';
 
 const NuevoRegistro = () => {
-  const {tiendaSelect, fetchTiendaSelect, productos, fetchProductos} = useStore();
+  const { tiendaSelect, fetchTiendaSelect, productos, fetchProductos } = useStore();
   const [tienda, setTienda] = useState(null);
+  const [categoria, setCategoria] = useState(null);
+  const [productosFiltrados, setProductosFiltrados] = useState([]);
   const [cantidadesExhibidas, setCantidadesExhibidas] = useState({});
   const [cantidadesDeposito, setCantidadesDeposito] = useState({});
   const [cantidadesSugeridas, setCantidadesSugeridas] = useState({});
@@ -20,10 +22,22 @@ const NuevoRegistro = () => {
   useEffect(() => {
     fetchTiendaSelect();
     fetchProductos();
-  }, [fetchTiendaSelect, fetchProductos])
+  }, [fetchTiendaSelect, fetchProductos]);
+
+  useEffect(() => {
+    if (categoria) {
+      setProductosFiltrados(productos.filter(producto => producto.categoria === categoria.value));
+    } else {
+      setProductosFiltrados([]);
+    }
+  }, [categoria, productos]);
 
   const handleTiendaChange = selectedOption => {
     setTienda(selectedOption);
+  };
+
+  const handleCategoriaChange = selectedOption => {
+    setCategoria(selectedOption);
   };
 
   const handleSubmit = async e => {
@@ -34,13 +48,14 @@ const NuevoRegistro = () => {
 
       const reposicionData = {
         tiendaId: tienda.value,
-        productos: productos.map(producto => ({
+        productos: productosFiltrados.map(producto => ({
           producto: producto._id,
           cantidadExhibida: cantidadesExhibidas[producto._id] || 0,
           deposito: cantidadesDeposito[producto._id] || 0,
           sugerido: cantidadesSugeridas[producto._id] || 0,
           vencidos: cantidadesVencidas[producto._id] || 0,
         })),
+        categoria: categoria.value
       };
 
       const response = await axios.post(
@@ -65,6 +80,11 @@ const NuevoRegistro = () => {
     }
   };
 
+  const categoriaOptions = [
+    { value: 'Lievito', label: 'Lievito' },
+    { value: 'EatWell', label: 'EatWell' },
+  ];
+
   return (
     <Layout>
       <div className="max-w-2xl mx-auto">
@@ -82,90 +102,98 @@ const NuevoRegistro = () => {
         )}
 
         <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Selecciona la tienda</label>
-            <Select options={tiendaSelect} onChange={handleTiendaChange} value={tienda} />
+          <div className="mb-4 flex space-x-4">
+            <div className="w-1/2">
+              <label className="block text-sm font-medium text-gray-700">Selecciona la tienda</label>
+              <Select options={tiendaSelect} onChange={handleTiendaChange} value={tienda} />
+            </div>
+            <div className="w-1/2">
+              <label className="block text-sm font-medium text-gray-700">Categoría</label>
+              <Select options={categoriaOptions} onChange={handleCategoriaChange} value={categoria} />
+            </div>
           </div>
 
-          <div className="mb-4 overflow-x-auto">
-            <table className="min-w-full border divide-y">
-              <thead>
-                <tr>
-                  <th className="py-2 px-4 border-b">Productos</th>
-                  <th className="py-2 px-4 border-b">Cant. Exhibida</th>
-                  <th className="py-2 px-4 border-b">Cant. Depósito</th>
-                  <th className="py-2 px-4 border-b">Cant. Sugerida</th>
-                  <th className="py-2 px-4 border-b">Cant. Vencida</th>
-                </tr>
-              </thead>
-              <tbody>
-                {productos.map(producto => (
-                  <tr key={producto._id}>
-                    <td className="py-2 px-4 border-b">{producto.nombreProducto}</td>
-                    <td className="py-2 px-4 border-b">
-                      <input
-                        type="number"
-                        className="w-16 px-2 py-1 border rounded"
-                        value={cantidadesExhibidas[producto._id] || ''}
-                        onChange={e => {
-                          setCantidadesExhibidas(prevState => ({
-                            ...prevState,
-                            [producto._id]: e.target.value,
-                          }));
-                        }}
-                      />
-                    </td>
-                    <td className="py-2 px-4 border-b">
-                      <input
-                        type="number"
-                        className="w-16 px-2 py-1 border rounded"
-                        value={cantidadesDeposito[producto._id] || ''}
-                        onChange={e => {
-                          setCantidadesDeposito(prevState => ({
-                            ...prevState,
-                            [producto._id]: e.target.value,
-                          }));
-                        }}
-                      />
-                    </td>
-                    <td className="py-2 px-4 border-b">
-                      <input
-                        type="number"
-                        className="w-16 px-2 py-1 border rounded"
-                        value={cantidadesSugeridas[producto._id] || ''}
-                        onChange={e => {
-                          setCantidadesSugeridas(prevState => ({
-                            ...prevState,
-                            [producto._id]: e.target.value,
-                          }));
-                        }}
-                      />
-                    </td>
-                    <td className="py-2 px-4 border-b">
-                      <input
-                        type="number"
-                        className="w-16 px-2 py-1 border rounded"
-                        value={cantidadesVencidas[producto._id] || ''}
-                        onChange={e => {
-                          setCantidadesVencidas(prevState => ({
-                            ...prevState,
-                            [producto._id]: e.target.value,
-                          }));
-                        }}
-                      />
-                    </td>
+          {productosFiltrados.length > 0 && (
+            <div className="mb-4 overflow-x-auto">
+              <table className="min-w-full border divide-y">
+                <thead>
+                  <tr>
+                    <th className="py-2 px-4 border-b">Productos</th>
+                    <th className="py-2 px-4 border-b">Cant. Exhibida</th>
+                    <th className="py-2 px-4 border-b">Cant. Depósito</th>
+                    <th className="py-2 px-4 border-b">Cant. Sugerida</th>
+                    <th className="py-2 px-4 border-b">Cant. Vencida</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {productosFiltrados.map(producto => (
+                    <tr key={producto._id}>
+                      <td className="py-2 px-4 border-b">{producto.nombreProducto}</td>
+                      <td className="py-2 px-4 border-b">
+                        <input
+                          type="number"
+                          className="w-16 px-2 py-1 border rounded"
+                          value={cantidadesExhibidas[producto._id] || ''}
+                          onChange={e => {
+                            setCantidadesExhibidas(prevState => ({
+                              ...prevState,
+                              [producto._id]: e.target.value,
+                            }));
+                          }}
+                        />
+                      </td>
+                      <td className="py-2 px-4 border-b">
+                        <input
+                          type="number"
+                          className="w-16 px-2 py-1 border rounded"
+                          value={cantidadesDeposito[producto._id] || ''}
+                          onChange={e => {
+                            setCantidadesDeposito(prevState => ({
+                              ...prevState,
+                              [producto._id]: e.target.value,
+                            }));
+                          }}
+                        />
+                      </td>
+                      <td className="py-2 px-4 border-b">
+                        <input
+                          type="number"
+                          className="w-16 px-2 py-1 border rounded"
+                          value={cantidadesSugeridas[producto._id] || ''}
+                          onChange={e => {
+                            setCantidadesSugeridas(prevState => ({
+                              ...prevState,
+                              [producto._id]: e.target.value,
+                            }));
+                          }}
+                        />
+                      </td>
+                      <td className="py-2 px-4 border-b">
+                        <input
+                          type="number"
+                          className="w-16 px-2 py-1 border rounded"
+                          value={cantidadesVencidas[producto._id] || ''}
+                          onChange={e => {
+                            setCantidadesVencidas(prevState => ({
+                              ...prevState,
+                              [producto._id]: e.target.value,
+                            }));
+                          }}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
           <div className="flex items-center justify-center mt-4">
             <button
               type="submit"
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             >
-              Registrar
+              Guardar
             </button>
             <button
               type="button"
