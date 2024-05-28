@@ -4,7 +4,8 @@ import Layout from '../../components/Layout';
 import Pagination from '../../components/Pagination';
 import useStore from '../../store';
 import Swal from 'sweetalert2';
-import { FaTrash } from 'react-icons/fa'; 
+import { FaTrash, FaDownload } from 'react-icons/fa';
+import axios from 'axios';
 
 const Reposiciones = () => {
   const { reposiciones, fetchReposiciones, eliminarItem } = useStore((state) => ({
@@ -55,17 +56,48 @@ const Reposiciones = () => {
     });
   };
 
+  const descargarReposiciones = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const apiUrl = import.meta.env.VITE_API_SERVER;
+      const response = await axios.get(`${apiUrl}/reposiciones/descargar`, {
+        headers: {
+          'x-auth-token': token,
+        },
+        responseType: 'blob',
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'reposiciones.xlsx');
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      Swal.fire('Error', 'No se pudo descargar el archivo', 'error');
+      console.error('Error al descargar el archivo:', error);
+    }
+  };
+
   const pageCount = Math.ceil(reposiciones.totalDocs / reposiciones.limit);
 
   return (
     <Layout>
       <h1 className="text-2xl text-gray-800 font-light">Reposiciones</h1>
-      <Link
-        to="/nuevoregistro"
-        className="bg-blue-800 py-2 px-5 mt-3 inline-block text-white rounded text-sm hover:bg-gray-800 mb-3 uppercase font-bold w-full lg:w-auto text-center"
-      >
-        Nuevo Registro
-      </Link>
+      <div className="flex justify-between items-center mb-4">
+        <Link
+          to="/nuevoregistro"
+          className="bg-blue-800 py-2 px-5 mt-3 text-white rounded text-sm hover:bg-gray-800 mb-3 uppercase font-bold w-full lg:w-auto text-center"
+        >
+          Agregar
+        </Link>
+        <button
+          onClick={descargarReposiciones}
+          className="bg-green-500 py-2 px-5 mt-3 text-white rounded text-sm hover:bg-green-700 mb-3 uppercase font-bold w-full lg:w-auto text-center flex items-center justify-center"
+        >
+          <FaDownload className="mr-2" /> Descargar
+        </button>
+      </div>
 
       <div className="overflow-x-auto">
         <table className="min-w-full table-auto shadow-md">
@@ -74,6 +106,7 @@ const Reposiciones = () => {
               <th className="px-4 py-2">Tienda</th>
               <th className="px-4 py-2">Productos</th>
               <th className="px-4 py-2">Fecha de Reposición</th>
+              <th className="px-4 py-2">Categoría</th>
               <th className="px-4 py-2">Registrado por</th>
               <th className="px-4 py-2 text-center">Eliminar</th> 
             </tr>
@@ -91,6 +124,9 @@ const Reposiciones = () => {
                   </Link>
                 </td>
                 <td className="border px-4 py-2">{new Date(reposicion.fechaReposicion).toLocaleDateString()}</td>
+                <td className="border px-4 py-2">
+                  {reposicion.productos.length > 0 && reposicion.productos[0].producto.categoria}
+                </td>
                 <td className="border px-4 py-2">{reposicion.usuario ? `${reposicion.usuario.nombre} ${reposicion.usuario.apellido}` : 'Desconocido'}</td>
                 <td className="border px-4 py-2 text-center">
                   <button
@@ -108,7 +144,7 @@ const Reposiciones = () => {
 
       <Pagination
         currentPage={currentPage}
-        pageCount={Math.ceil(reposiciones.totalDocs / reposiciones.limit)}
+        pageCount={pageCount}
         onPageChange={handlePageChange}
         totalDocs={reposiciones.totalDocs}
         limit={reposiciones.limit}
