@@ -3,9 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Layout from '../../components/Layout';
 import Pagination from '../../components/Pagination';
-import EditarTienda from './EditarTienda';
 import useStore from '../../store';
-import { FaEdit, FaShoppingCart, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash, FaShoppingCart } from "react-icons/fa";
 
 const Tiendas = () => {
   const navigate = useNavigate();
@@ -97,54 +96,50 @@ const Tiendas = () => {
               <th className="px-4 py-3">Pedidos</th>
               <th className="px-4 py-3">Reposiciones</th>
               <th className="px-4 py-3">Detalle</th>
-              <th className="px-4 py-3">Editar</th>
-              <th className="px-4 py-3">Pedido</th>
-              <th className="px-4 py-3">Eliminar</th>
+              <th className="px-4 py-3">Acciones</th>
             </tr>
           </thead>
 
           <tbody className="bg-white">
             {docs.map((tienda, index) => (
               <tr key={index} className="hover:bg-gray-100">
-                <td className="border px-4 py-2">{tienda.nombreTienda}</td>
+                <td className="border px-4 py-2 text-gray-700 text-center">{tienda.nombreTienda}</td>
                 <td className="border px-4 py-2 text-center">
-                  <Link to={`/pedidos/tienda/${tienda._id}`} className="text-blue-500 hover:underline">
+                  <Link to={`/pedidos/tienda/${tienda._id}`} className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200">
                     Ver Pedidos
                   </Link>
                 </td>
-                <td className="border px-4 py-2">
-                  <Link to={`/reposiciones/tienda/${tienda._id}`} className="text-blue-500 hover:underline">
+                <td className="border px-4 py-2 text-center">
+                  <Link to={`/reposiciones/tienda/${tienda._id}`} className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200">
                     Reposiciones
                   </Link>
                 </td>
-                <td className="border px-4 py-2">
-                  <Link to={`/tiendas/${tienda._id}/detalle`} className="text-blue-500 hover:underline">
+                <td className="border px-4 py-2 text-center">
+                  <Link to={`/tiendas/${tienda._id}/detalle`} className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200">
                     Ver Tienda
                   </Link>
                 </td>
                 <td className="border px-4 py-2 text-center">
-                  <button
-                    onClick={() => handleEditarTiendaClick(tienda._id)}
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded flex items-center justify-center mx-auto"
-                  >
-                    <FaEdit className="mr-2" />
-                  </button>
-                </td>
-                <td className="border px-4 py-2 text-center">
-                  <button
-                    onClick={() => handlePedidoClick(tienda._id)}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded flex items-center justify-center mx-auto"
-                  >
-                    <FaShoppingCart className="mr-2" />
-                  </button>
-                </td>
-                <td className="border px-4 py-2 text-center">
-                  <button
-                    onClick={() => confirmarEliminarTienda(tienda._id)}
-                    className="text-red-500 hover:text-red-700 transition duration-300 inline-flex items-center justify-center mx-auto"
-                  >
-                    <FaTrash />
-                  </button>
+                  <div className="flex justify-center items-center space-x-2">
+                    <button
+                      onClick={() => handleEditarTiendaClick(tienda._id)}
+                      className="text-gray-700  hover:text-blue-600 hover:underline transition-colors duration-200"
+                    >
+                      <FaEdit size={20} />
+                    </button>
+                    <button
+                      onClick={() => confirmarEliminarTienda(tienda._id)}
+                      className="text-gray-700  hover:text-blue-600 hover:underline transition-colors duration-200"
+                    >
+                      <FaTrash size={20} />
+                    </button>
+                    <button
+                      onClick={() => handlePedidoClick(tienda._id)}
+                      className="text-gray-700  hover:text-blue-600 hover:underline transition-colors duration-200"
+                    >
+                      <FaShoppingCart size={20} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -158,7 +153,7 @@ const Tiendas = () => {
         onPageChange={handlePageChange}
         totalDocs={totalDocs}
         limit={limit}
-      />
+      /> 
 
       {tiendaEditarId && <EditarTienda tiendaId={tiendaEditarId} />}
     </Layout>
