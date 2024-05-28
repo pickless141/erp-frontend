@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import Pagination from '../components/Pagination';
@@ -10,7 +10,7 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 
 const Home = () => {
   const navigate = useNavigate();
-  const {clientes, fetchClientes, eliminarItem} = useStore(state => ({
+  const { clientes, fetchClientes, eliminarItem } = useStore(state => ({
     clientes: state.clientes,
     fetchClientes: state.fetchClientes,
     eliminarItem: state.eliminarItem,
@@ -38,25 +38,16 @@ const Home = () => {
       if (result.isConfirmed) {
         eliminarItem('clientes', clienteId, {
           onSuccess: () => {
-            Swal.fire(
-              'Eliminado!',
-              'El cliente ha sido eliminado.',
-              'success'
-            );
+            Swal.fire('Eliminado!', 'El cliente ha sido eliminado.', 'success');
             fetchClientes(currentPage, searchTerm);
           },
           onError: () => {
-            Swal.fire(
-              'Error!',
-              'No se pudo eliminar el cliente.',
-              'error'
-            );
+            Swal.fire('Error!', 'No se pudo eliminar el cliente.', 'error');
           }
         });
       }
     });
   };
-
 
   const handleVerTiendasClick = (clienteId) => {
     if (clienteId) {
@@ -79,7 +70,7 @@ const Home = () => {
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
     fetchClientes(newPage, searchTerm);
-};
+  };
 
   const handleSearch = (term) => {
     setSearchTerm(term);
@@ -90,7 +81,7 @@ const Home = () => {
 
   return (
     <Layout>
-      <h1 className="text-2xl text-gray-800 font-semibold mb-6">Clientes</h1>
+      <h1 className="text-2xl text-gray-800 font-light mb-6">Clientes</h1>
       <div className="flex flex-col md:flex-row justify-between mb-6">
         <Link
           to="/nuevocliente"
@@ -108,47 +99,45 @@ const Home = () => {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full table-auto shadow-md">
+        <table className="min-w-full table-auto shadow-md w-full">
           <thead className="bg-gray-800 text-white">
             <tr>
               <th className="px-4 py-3">Nombre</th>
               <th className="px-4 py-3">Ruc</th>
               <th className="px-4 py-3">Tiendas</th>
-              <th className="px-4 py-3">Editar</th>
-              <th className="px-4 py-3">Eliminar</th>
-
+              <th className="px-4 py-3">Acciones</th>
             </tr>
           </thead>
 
           <tbody className="bg-white">
             {clientes.docs.map((cliente, index) => (
               <tr key={index} className="hover:bg-gray-100">
-                <td className="border px-4 py-2">{cliente.nombre}</td>
-                <td className="border px-4 py-2">{cliente.ruc}</td>
-                <td className="border px-4 py-2">
+                <td className="border px-4 py-2 text-gray-700 text-center">{cliente.nombre}</td>
+                <td className="border px-4 py-2 text-center">{cliente.ruc}</td>
+                <td className="border px-4 py-2 text-center">
                   <Link
                     to={`/home/${cliente._id}`}
                     onClick={() => handleVerTiendasClick(cliente._id)}
-                    className="text-blue-500 hover:underline transition-colors duration-300"
+                    className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200"
                   >
                     Ver Tiendas
                   </Link>
                 </td>
                 <td className="border px-4 py-2 text-center">
-                  <button
-                    onClick={() => handleEditarClienteClick(cliente._id)}
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded inline-flex items-center justify-center transition-colors duration-300 mr-2"
-                  >
-                    <FaEdit />
-                  </button>
-                </td>
-                <td className="border px-4 py-2 text-center">
+                  <div className="flex justify-center items-center space-x-2">
                     <button
-                    onClick={() => confirmarEliminarCliente(cliente._id)}
-                    className="text-red-500 hover:text-red-700 transition duration-300 inline-flex items-center justify-center"
-                  >
-                    <FaTrash />
-                  </button>
+                      onClick={() => handleEditarClienteClick(cliente._id)}
+                      className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200"
+                    >
+                      <FaEdit size={20} />
+                    </button>
+                    <button
+                      onClick={() => confirmarEliminarCliente(cliente._id)}
+                      className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200"
+                    >
+                      <FaTrash size={20} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
