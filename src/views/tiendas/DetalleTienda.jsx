@@ -24,6 +24,7 @@ const DetalleTienda = () => {
       }
 
       const data = await response.json();
+      console.log('Datos de la tienda:', data);
       setTienda(data);
     } catch (error) {
       console.error(error);
@@ -51,13 +52,13 @@ const DetalleTienda = () => {
             <ul className="mb-5">
               {tienda.productos.map((productoDetalle, index) => (
                 <li key={index} className="py-2 border-b border-gray-200">
-                  <strong className="text-gray-700">{productoDetalle.nombre}</strong> - Gs. {productoDetalle.precio}
+                  <strong className="text-gray-700">{productoDetalle.nombreProducto}</strong> - Gs. {productoDetalle.precio}
                 </li>
               ))}
             </ul>
             <div className="flex justify-between items-center mt-5">
           <Link to="/tiendas" className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-            Volver
+            Volver 
           </Link>
           <button onClick={abrirModal} className="flex items-center px-5 py-3 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
             Nuevo Producto
