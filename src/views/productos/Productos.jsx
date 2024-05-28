@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Layout from '../../components/Layout';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaEdit, FaTrash } from "react-icons/fa";
@@ -39,50 +39,51 @@ function Productos() {
 
   return (
     <Layout>
-      <h1 className="text-2xl text-gray-800 font-semibold mb-4">Productos</h1>
-      <div className="flex flex-col md:flex-row justify-between mb-4">
+      <h1 className="text-2xl text-gray-800 font-light mb-6">Productos</h1>
+      <div className="flex flex-col md:flex-row justify-between mb-6">
         <Link
           to="/nuevoproducto"
           className="bg-blue-800 py-2 px-5 inline-block text-white rounded text-sm hover:bg-gray-800 mb-3 md:mb-0 uppercase font-bold w-full md:w-auto text-center md:mr-3 transition-colors duration-300"
         >
-          Nuevo Producto
+          Agregar
         </Link>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full table-auto shadow-md">
+        <table className="min-w-full table-auto shadow-md w-full">
           <thead className="bg-gray-800 text-white">
             <tr>
-              <th className="px-4 py-2">Nombre</th>
-              <th className="px-4 py-2">Existencia</th>
-              <th className="px-4 py-2">Lote</th>
-              <th className="px-4 py-2">Cod. de Barra</th>
-              <th className="px-4 py-2 text-center">Editar</th>
-              <th className="px-4 py-2 text-center">Eliminar</th> 
+              <th className="px-4 py-3">Nombre</th>
+              <th className="px-4 py-3">Existencia</th>
+              <th className="px-4 py-3">Lote</th>
+              <th className="px-4 py-3">Cod. de Barra</th>
+              <th className="px-4 py-3">Categoría</th>
+              <th className="px-4 py-3">Acciones</th>
             </tr>
           </thead>
           <tbody className="bg-white">
             {productos.map((producto, index) => (
               <tr key={index} className="hover:bg-gray-100">
-                <td className="border px-4 py-2">{producto.nombreProducto}</td>
-                <td className="border px-4 py-2">{producto.existencia}</td>
-                <td className="border px-4 py-2 text-blue-700">{producto.lote}</td>
-                <td className="border px-4 py-2 text-blue-700">{producto.codBarra}</td>
+                <td className="border px-4 py-2 text-gray-700 text-center">{producto.nombreProducto}</td>
+                <td className="border px-4 py-2 text-center">{producto.existencia}</td>
+                <td className="border px-4 py-2 text-blue-600 text-center">{producto.lote}</td>
+                <td className="border px-4 py-2 text-blue-600 text-center">{producto.codBarra}</td>
+                <td className="border px-4 py-2 text-center">{producto.categoria}</td>
                 <td className="border px-4 py-2 text-center">
-                  <button
-                    onClick={() => navigate(`/editarproducto/${producto._id}`)}
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded inline-flex items-center justify-center transition-colors duration-300"
-                  >
-                    <FaEdit />
-                  </button>
-                </td>
-                <td className="border px-4 py-2 text-center"> {/* Botón para eliminar */}
-                  <button
-                    onClick={() => confirmarEliminarProducto(producto._id)}
-                    className="text-red-500 hover:text-red-700 transition duration-300 inline-flex items-center justify-center"
-                  >
-                    <FaTrash />
-                  </button>
+                  <div className="flex justify-center items-center space-x-2">
+                    <button
+                      onClick={() => navigate(`/editarproducto/${producto._id}`)}
+                      className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200"
+                    >
+                      <FaEdit size={20} />
+                    </button>
+                    <button
+                      onClick={() => confirmarEliminarProducto(producto._id)}
+                      className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200"
+                    >
+                      <FaTrash size={20} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

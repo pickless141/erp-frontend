@@ -21,7 +21,7 @@ function Producciones() {
     fetchProducciones(currentPage);
     const totalPages = Math.ceil(totalDocs / limit);
     setTotalPages(totalPages);
-  }, [currentPage, fetchProducciones, totalDocs, limit]);;
+  }, [currentPage, fetchProducciones, totalDocs, limit]);
 
   const confirmarEliminarProduccion = (produccionId) => {
     Swal.fire({
@@ -47,53 +47,55 @@ function Producciones() {
       }
     });
   };
-  
 
   return (
     <Layout>
-      <h1 className="text-2xl text-gray-800 font-semibold mb-4">Producciones</h1>
-      <div className="flex flex-col md:flex-row justify-between mb-4">
+      <h1 className="text-2xl text-gray-800 font-light mb-6">Producciones</h1>
+      <div className="flex flex-col md:flex-row justify-between mb-6">
         <Link
           to="/nuevaproduccion"
           className="bg-blue-800 py-2 px-5 inline-block text-white rounded text-sm hover:bg-gray-800 mb-3 md:mb-0 uppercase font-bold w-full md:w-auto text-center md:mr-3 transition-colors duration-300"
         >
-          Nueva Producción
+          Agregar
         </Link>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full table-auto shadow-md">
+        <table className="min-w-full table-auto shadow-md w-full">
           <thead className="bg-gray-800 text-white">
             <tr>
-              <th className="px-4 py-2">Producto</th>
-              <th className="px-4 py-2">Cantidad Producida</th>
-              <th className="px-4 py-2">Fecha de Producción</th>
-              <th className="px-4 py-2">Número de Lote</th>
-              <th className="px-4 py-2">Fecha de Vencimiento</th>
-              <th className="px-4 py-2">Eliminar</th>
+              <th className="px-4 py-3">Producto</th>
+              <th className="px-4 py-3">Cantidad Producida</th>
+              <th className="px-4 py-3">Fecha de Producción</th>
+              <th className="px-4 py-3">Número de Lote</th>
+              <th className="px-4 py-3">Fecha de Vencimiento</th>
+              <th className="px-4 py-3">Acciones</th>
             </tr>
           </thead>
           <tbody className="bg-white">
             {producciones.map((produccion, index) => (
               <tr key={index} className="hover:bg-gray-100">
-                <td className="border px-4 py-2">{produccion.producto ? produccion.producto.nombreProducto : 'Producto no disponible'}</td>
-                <td className="border px-4 py-2">{produccion.cantidadProducida}</td>
-                <td className="border px-4 py-2">{new Date(produccion.fechaProduccion).toLocaleString()}</td> 
-                <td className="border px-4 py-2">{produccion.numeroLote}</td> 
-                <td className="border px-4 py-2">{new Date(produccion.fechaVencimiento).toLocaleDateString()}</td>
+                <td className="border px-4 py-2 text-gray-700 text-center">{produccion.producto ? produccion.producto.nombreProducto : 'Producto no disponible'}</td>
+                <td className="border px-4 py-2 text-center">{produccion.cantidadProducida}</td>
+                <td className="border px-4 py-2 text-center">{new Date(produccion.fechaProduccion).toLocaleString()}</td> 
+                <td className="border px-4 py-2 text-center">{produccion.numeroLote}</td> 
+                <td className="border px-4 py-2 text-center">{new Date(produccion.fechaVencimiento).toLocaleDateString()}</td>
                 <td className="border px-4 py-2 text-center">
-                  <button
-                    onClick={() => confirmarEliminarProduccion(produccion._id)}
-                    className="text-red-500 hover:text-red-700 transition duration-300 inline-flex items-center justify-center"
-                  >
-                    <FaTrash />
-                  </button>
+                  <div className="flex justify-center items-center space-x-2">
+                    <button
+                      onClick={() => confirmarEliminarProduccion(produccion._id)}
+                      className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200"
+                    >
+                      <FaTrash size={20} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      
       <Pagination
         currentPage={currentPage}
         pageCount={totalPages}

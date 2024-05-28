@@ -6,7 +6,7 @@ import useStore from '../../store';
 import Layout from '../../components/Layout';
 import Pagination from '../../components/Pagination';
 import EditarInsumo from './EditarInsumo';
-//
+
 const Insumos = () => {
   const navigate = useNavigate();
   const { insumos, fetchInsumos, eliminarItem, searchTerm, currentPage, setSearchTerm, setCurrentPage } = useStore((state) => ({
@@ -18,13 +18,12 @@ const Insumos = () => {
     setSearchTerm: state.setSearchTerm,
     setCurrentPage: state.setCurrentPage,
   }));
-  
+
   const [insumoEditarId, setInsumoEditarId] = useState(null);
 
   useEffect(() => {
     fetchInsumos(currentPage, searchTerm)
   }, [currentPage, searchTerm, fetchInsumos]);
-  
 
   const confirmarEliminarInsumo = (insumoId) => {
     Swal.fire({
@@ -67,7 +66,7 @@ const Insumos = () => {
 
   return (
     <Layout>
-      <h1 className="text-2xl text-gray-800 font-semibold mb-6">Insumos</h1>
+      <h1 className="text-2xl text-gray-800 font-light mb-6">Insumos</h1>
       <div className="flex flex-col md:flex-row justify-between mb-6">
         <Link
           to="/nuevoinsumo"
@@ -80,42 +79,41 @@ const Insumos = () => {
           placeholder="Buscar por nombre de insumo"
           value={searchTerm}
           onChange={handleSearchChange}
-          className="block w-full py-2 px-3 border rounded shadow-sm"
+          className="block w-full py-2 px-3 border rounded shadow-sm mb-3 md:mb-0"
         />
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full table-auto shadow-md">
+        <table className="min-w-full table-auto shadow-md w-full">
           <thead className="bg-gray-800 text-white">
             <tr>
-              <th className="px-4 py-2">Producto</th>
-              <th className="px-4 py-2">Peso</th>
-              <th className="px-4 py-2">Descripción</th>
-              <th className="px-4 py-2 text-center">Editar</th>
-              <th className="px-4 py-2 text-center">Eliminar</th>
+              <th className="px-4 py-3">Producto</th>
+              <th className="px-4 py-3">Peso</th>
+              <th className="px-4 py-3">Descripción</th>
+              <th className="px-4 py-3">Acciones</th>
             </tr>
           </thead>
           <tbody className="bg-white">
             {insumos.docs.map((insumo, index) => (
               <tr key={index} className="hover:bg-gray-100">
-                <td className="border px-4 py-2">{insumo.producto}</td>
-                <td className="border px-4 py-2">{insumo.peso.valor} {insumo.peso.unidad}</td>
-                <td className="border px-4 py-2">{insumo.descripcion}</td>
+                <td className="border px-4 py-2 text-gray-700 text-center">{insumo.producto}</td>
+                <td className="border px-4 py-2 text-center">{insumo.peso.valor} {insumo.peso.unidad}</td>
+                <td className="border px-4 py-2 text-center">{insumo.descripcion}</td>
                 <td className="border px-4 py-2 text-center">
-                  <button
-                    onClick={() => handleEditarInsumoClick(insumo._id)}
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded inline-flex items-center justify-center transition-colors duration-300"
-                  >
-                    <FaEdit />
-                  </button>
-                </td>
-                <td className="border px-4 py-2 text-center">
-                  <button
-                    onClick={() => confirmarEliminarInsumo(insumo._id)}
-                    className="text-red-500 hover:text-red-700 transition duration-300 inline-flex items-center justify-center"
-                  >
-                    <FaTrash />
-                  </button>
+                  <div className="flex justify-center items-center space-x-2">
+                    <button
+                      onClick={() => handleEditarInsumoClick(insumo._id)}
+                      className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200"
+                    >
+                      <FaEdit size={20} />
+                    </button>
+                    <button
+                      onClick={() => confirmarEliminarInsumo(insumo._id)}
+                      className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200"
+                    >
+                      <FaTrash size={20} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
