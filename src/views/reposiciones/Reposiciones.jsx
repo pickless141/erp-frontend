@@ -91,12 +91,12 @@ const Reposiciones = () => {
         >
           Agregar
         </Link>
-        <button
+        {/* <button
           onClick={descargarReposiciones}
           className="bg-green-500 py-2 px-5 mt-3 text-white rounded text-sm hover:bg-green-700 mb-3 uppercase font-bold w-full lg:w-auto text-center flex items-center justify-center"
         >
           <FaDownload className="mr-2" /> Descargar
-        </button>
+        </button> */}
       </div>
 
       <div className="overflow-x-auto">
