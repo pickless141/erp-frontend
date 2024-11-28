@@ -32,7 +32,7 @@ const Sidebar = () => {
         label: "Reposiciones", 
         submenu: [
           { path: "/reposiciones", label: "Ver Reposiciones" },
-          { path: "/ultimas-reposiciones", label: "Últimas Reposiciones" },
+          // { path: "/ultimas-reposiciones", label: "Últimas Reposiciones" },
         ],
       },
       { path: "/productos", label: "Productos" },
@@ -51,7 +51,7 @@ const Sidebar = () => {
         label: "Reposiciones", 
         submenu: [
           { path: "/reposiciones", label: "Ver Reposiciones" },
-          { path: "/ultimas-reposiciones", label: "Últimas Reposiciones" }
+          // { path: "/ultimas-reposiciones", label: "Últimas Reposiciones" }
         ],
       },
       { path: "/productos", label: "Productos" }
@@ -64,7 +64,7 @@ const Sidebar = () => {
         label: "Reposiciones",
         submenu: [
           { path: "/reposiciones", label: "Ver Reposiciones" },
-          { path: "/ultimas-reposiciones", label: "Últimas Reposiciones" }
+          // { path: "/ultimas-reposiciones", label: "Últimas Reposiciones" }
         ],
       },
       { path: "/productos", label: "Productos" }
@@ -77,7 +77,7 @@ const Sidebar = () => {
         label: "Reposiciones",
         submenu: [
           { path: "/reposiciones", label: "Ver Reposiciones" },
-          { path: "/ultimas-reposiciones", label: "Últimas Reposiciones" }
+          // { path: "/ultimas-reposiciones", label: "Últimas Reposiciones" }
         ],
       },
       { path: "/productos", label: "Productos" }
