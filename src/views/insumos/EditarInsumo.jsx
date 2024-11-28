@@ -191,7 +191,7 @@ function EditarInsumo() {
               type="submit"
               className="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
-              Actualizar Insumo
+              Actualizar 
             </button>
             <Link
               to="/insumos"

@@ -3,11 +3,19 @@ import Layout from '../../components/Layout';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaEdit, FaTrash } from "react-icons/fa";
 import Swal from 'sweetalert2';
-import useStore from '../../store';
+import { useProductosStore, useGeneralStore } from '../../store/index';
 
 function Productos() {
   const navigate = useNavigate();
-  const { productos, fetchProductos, eliminarItem } = useStore();
+
+  const { productos, fetchProductos } = useProductosStore((state) => ({
+    productos: state.productos,
+    fetchProductos: state.fetchProductos,
+  }));
+
+  const { eliminarItem } = useGeneralStore((state) => ({
+    eliminarItem: state.eliminarItem,
+  }));
 
   useEffect(() => {
     fetchProductos();
@@ -31,7 +39,7 @@ function Productos() {
           },
           onError: () => {
             Swal.fire('Error!', 'No se pudo eliminar el producto.', 'error');
-          }
+          },
         });
       }
     });

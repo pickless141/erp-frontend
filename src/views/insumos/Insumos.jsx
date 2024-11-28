@@ -2,28 +2,36 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import useStore from '../../store';
+import { useInsumosStore, useGeneralStore } from '../../store/index';
 import Layout from '../../components/Layout';
 import Pagination from '../../components/Pagination';
 import EditarInsumo from './EditarInsumo';
 
 const Insumos = () => {
   const navigate = useNavigate();
-  const { insumos, fetchInsumos, eliminarItem, searchTerm, currentPage, setSearchTerm, setCurrentPage } = useStore((state) => ({
+
+  const { insumos, fetchInsumos } = useInsumosStore((state) => ({
     insumos: state.insumos,
     fetchInsumos: state.fetchInsumos,
+  }));
+
+  const { eliminarItem, searchTerm, currentPage, setSearchTerm, setCurrentPage, resetCurrentPage, resetSearchTerm } = useGeneralStore((state) => ({
     eliminarItem: state.eliminarItem,
     searchTerm: state.searchTerm,
     currentPage: state.currentPage,
     setSearchTerm: state.setSearchTerm,
     setCurrentPage: state.setCurrentPage,
+    resetCurrentPage: state.resetCurrentPage,
+    resetSearchTerm: state.resetSearchTerm,
   }));
 
   const [insumoEditarId, setInsumoEditarId] = useState(null);
 
   useEffect(() => {
-    fetchInsumos(currentPage, searchTerm)
-  }, [currentPage, searchTerm, fetchInsumos]);
+    resetCurrentPage();
+    resetSearchTerm();
+    fetchInsumos(1, ""); 
+  }, [fetchInsumos, resetCurrentPage, resetSearchTerm]);
 
   const confirmarEliminarInsumo = (insumoId) => {
     Swal.fire({
@@ -42,26 +50,28 @@ const Insumos = () => {
           onError: (error) => {
             console.error('Error al eliminar el insumo:', error);
             Swal.fire('Error!', 'No se pudo eliminar el insumo.', 'error');
-          }
+          },
         });
       }
     });
   };
 
   const handleEditarInsumoClick = (insumoId) => {
-    if (insumoId) {
-      setInsumoEditarId(insumoId);
-      navigate(`/editarinsumo/${insumoId}`);
-    } else {
-      console.error('insumoId es undefined');
-    }
+    setInsumoEditarId(insumoId);
+    navigate(`/editarinsumo/${insumoId}`);
   };
 
-  const handlePageChange = (page) => setCurrentPage(page);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    fetchInsumos(page, searchTerm);
+  };
+
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); 
+    setCurrentPage(1);
+    fetchInsumos(1, e.target.value);
   };
+
   const pageCount = Math.ceil(insumos?.totalDocs / insumos?.limit || 1);
 
   return (
@@ -122,11 +132,11 @@ const Insumos = () => {
       </div>
 
       <Pagination
-          currentPage={currentPage}
-          pageCount={pageCount}
-          onPageChange={handlePageChange}
-          totalDocs={insumos?.totalDocs || 0}
-          limit={insumos?.limit || 1}
+        currentPage={currentPage}
+        pageCount={pageCount}
+        onPageChange={handlePageChange}
+        totalDocs={insumos?.totalDocs || 0}
+        limit={insumos?.limit || 1}
       />
 
       {insumoEditarId && <EditarInsumo insumoId={insumoEditarId} />}

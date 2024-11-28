@@ -46,6 +46,14 @@ const ClienteTiendaDetail = () => {
       <div className="max-w-4xl mx-auto py-8">
         {tiendas.length > 0 ? (
           <div className="overflow-x-auto">
+            <div className="flex justify-end mb-4"> 
+              <button
+                onClick={() => navigate('/home')}
+                className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                Volver
+              </button>
+            </div>
             <table className="min-w-full table-auto shadow-md">
               <thead className="bg-gray-800 text-white">
                 <tr>
@@ -75,13 +83,6 @@ const ClienteTiendaDetail = () => {
             <p className="text-gray-700">No hay tiendas registradas para este cliente.</p>
           </div>
         )}
-
-        <button
-          onClick={() => navigate('/home')}
-          className="mt-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        >
-          Volver 
-        </button>
       </div>
     </Layout>
   );

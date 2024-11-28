@@ -7,7 +7,6 @@ const Header = () => {
   });
 
   useEffect(() => {
-    // Verificar si los datos del usuario existen en el almacenamiento local
     const storedNombre = localStorage.getItem('nombre');
     const storedApellido = localStorage.getItem('apellido');
     if (storedNombre && storedApellido) {

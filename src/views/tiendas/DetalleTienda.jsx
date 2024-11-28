@@ -1,76 +1,135 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import Layout from '../../components/Layout';
-import ProductoModal from './ProductoModal';
+import React, { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Button,
+  CircularProgress,
+  Box,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import ProductoModal from "./ProductoModal"; 
 
-const DetalleTienda = () => {
-  const { id } = useParams();
+const DetalleTienda = ({ open, onClose, tiendaId }) => {
   const [tienda, setTienda] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isProductoModalOpen, setIsProductoModalOpen] = useState(false); // Estado para el modal de productos
 
   const fetchTiendaDetalle = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const apiUrl = import.meta.env.VITE_API_SERVER;
-      const response = await fetch(`${apiUrl}/tiendas/${id}/detalle`, {
-        method: 'GET',
+      const response = await fetch(`${apiUrl}/tiendas/${tiendaId}/detalle`, {
+        method: "GET",
         headers: {
-          'x-auth-token': token,
+          "x-auth-token": token,
         },
       });
 
       if (!response.ok) {
-        throw new Error('Error al obtener los detalles de la tienda');
+        throw new Error("Error al obtener los detalles de la tienda");
       }
 
       const data = await response.json();
-      console.log('Datos de la tienda:', data);
       setTienda(data);
+      setLoading(false);
     } catch (error) {
       console.error(error);
+      setLoading(false);
     }
   };
+
   useEffect(() => {
-    fetchTiendaDetalle();
-  }, [id]);
-  
-  const abrirModal = () => setShowModal(true);
-  const cerrarModalYActualizar = () => {
-    setShowModal(false);
+    if (open) {
+      fetchTiendaDetalle();
+    }
+  }, [open, tiendaId]);
+
+  const handleOpenProductoModal = () => {
+    setIsProductoModalOpen(true);
+  };
+
+  const handleCloseProductoModal = () => {
+    setIsProductoModalOpen(false);
     fetchTiendaDetalle(); 
   };
 
   return (
-    <Layout>
-      <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-xl">
-        {tienda ? (
-          <>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-3">{tienda.nombreCliente} - {tienda.nombreTienda}</h2>
-            <p className="mb-4 text-gray-600"><strong>Dirección:</strong> {tienda.direccion}</p>
-            <p className="mb-5 text-gray-600"><strong>Descripción:</strong> {tienda.descripcion}</p>
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Productos</h3>
-            <ul className="mb-5">
-              {tienda.productos.map((productoDetalle, index) => (
-                <li key={index} className="py-2 border-b border-gray-200">
-                  <strong className="text-gray-700">{productoDetalle.nombreProducto}</strong> - Gs. {productoDetalle.precio}
-                </li>
-              ))}
-            </ul>
-            <div className="flex justify-between items-center mt-5">
-          <Link to="/tiendas" className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-            Volver 
-          </Link>
-          <button onClick={abrirModal} className="flex items-center px-5 py-3 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
-            Nuevo Producto
-          </button>
-        </div>
-          </>
-        ) : (
-          <p className="text-center text-gray-500">Cargando detalles de la tienda...</p>
-        )}
-        {showModal && <ProductoModal onClose={cerrarModalYActualizar} tiendaId={id} />}
-      </div>
-    </Layout>
+    <>
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          Detalles de la Tienda
+          <Tooltip title="Cerrar" arrow>
+            <IconButton
+              onClick={onClose}
+              sx={{ position: "absolute", right: 8, top: 8 }}
+              aria-label="Cerrar"
+            >
+              <CloseIcon />
+            </IconButton>
+          </Tooltip>
+        </DialogTitle>
+        <DialogContent dividers>
+          {loading ? (
+            <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+              <CircularProgress />
+            </Box>
+          ) : tienda ? (
+            <>
+              <Typography variant="h6" gutterBottom>
+                {tienda.nombreCliente} - {tienda.nombreTienda}
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                <strong>Dirección:</strong> {tienda.direccion}
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                <strong>Descripción:</strong> {tienda.descripcion}
+              </Typography>
+              <Typography variant="h6" gutterBottom>
+                Productos
+              </Typography>
+              <List>
+                {tienda.productos.map((productoDetalle, index) => (
+                  <ListItem key={index} divider>
+                    <ListItemText
+                      primary={productoDetalle.nombreProducto}
+                      secondary={`Gs. ${productoDetalle.precio}`}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </>
+          ) : (
+            <Typography color="textSecondary" align="center">
+              No se pudieron cargar los detalles de la tienda.
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleOpenProductoModal}
+            color="primary"
+            variant="contained"
+          >
+            Añadir
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {isProductoModalOpen && (
+        <ProductoModal
+          onClose={handleCloseProductoModal}
+          tiendaId={tiendaId}
+        />
+      )}
+    </>
   );
 };
 

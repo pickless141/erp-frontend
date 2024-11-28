@@ -1,18 +1,33 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Typography,
+  Button,
+  Box,
+  Grid,
+  MenuItem,
+  TextField,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
+import { Add, Delete, Close } from "@mui/icons-material";
 
 const ProductoModal = ({ onClose, tiendaId }) => {
   const [productos, setProductos] = useState([]);
-  const [productosSeleccionados, setProductosSeleccionados] = useState([{ productoId: '', precio: '' }]);
+  const [productosSeleccionados, setProductosSeleccionados] = useState([{ productoId: "", precio: "" }]);
   const apiUrl = import.meta.env.VITE_API_SERVER;
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchProductos = async () => {
       const response = await fetch(`${apiUrl}/productos`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token,
+          "Content-Type": "application/json",
+          "x-auth-token": token,
         },
       });
       const data = await response.json();
@@ -34,7 +49,7 @@ const ProductoModal = ({ onClose, tiendaId }) => {
   };
 
   const añadirProducto = () => {
-    setProductosSeleccionados([...productosSeleccionados, { productoId: '', precio: '' }]);
+    setProductosSeleccionados([...productosSeleccionados, { productoId: "", precio: "" }]);
   };
 
   const quitarProducto = (index) => {
@@ -46,10 +61,10 @@ const ProductoModal = ({ onClose, tiendaId }) => {
   const guardarProducto = async (e) => {
     e.preventDefault();
     const response = await fetch(`${apiUrl}/tiendas/${tiendaId}/nuevoproducto`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'x-auth-token': token,
+        "Content-Type": "application/json",
+        "x-auth-token": token,
       },
       body: JSON.stringify({ tiendaId, productos: productosSeleccionados }),
     });
@@ -63,70 +78,86 @@ const ProductoModal = ({ onClose, tiendaId }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">
-      <div className="bg-white rounded-lg p-6 w-full max-w-4xl mx-auto overflow-hidden">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Añadir Nuevo Producto</h3>
-        <form onSubmit={guardarProducto} className="space-y-4">
+    <Dialog open={true} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle>
+        Añadir Nuevo Producto
+        <Tooltip title="Cerrar" arrow>
+          <IconButton
+            onClick={onClose}
+            sx={{ position: "absolute", right: 8, top: 8 }}
+            aria-label="Cerrar"
+          >
+            <Close />
+          </IconButton>
+        </Tooltip>
+      </DialogTitle>
+      <DialogContent dividers>
+        <Typography variant="subtitle1" gutterBottom>
+          Seleccione los productos y asigne un precio:
+        </Typography>
+        <Box component="form" onSubmit={guardarProducto}>
           {productosSeleccionados.map((producto, index) => (
-            <div key={index} className="flex flex-wrap gap-3 items-center">
-              <select
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm sm:text-base"
-                value={producto.productoId}
-                onChange={(e) => handleProductoChange(index, e.target.value)}
-                required
-              >
-                <option value="">Seleccione un producto</option>
-                {productos.map((p) => (
-                  <option key={p._id} value={p._id}>
-                    {p.nombreProducto}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="number"
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm sm:text-base"
-                value={producto.precio}
-                onChange={(e) => handlePrecioChange(index, e.target.value)}
-                required
-              />
-              {productosSeleccionados.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => quitarProducto(index)}
-                  className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition-colors text-sm sm:text-base"
+            <Grid container spacing={2} key={index} alignItems="center" marginBottom={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  select
+                  fullWidth
+                  label="Producto"
+                  value={producto.productoId}
+                  onChange={(e) => handleProductoChange(index, e.target.value)}
+                  required
                 >
-                  X
-                </button>
-              )}
-            </div>
+                  <MenuItem value="">
+                    <em>Seleccione un producto</em>
+                  </MenuItem>
+                  {productos.map((p) => (
+                    <MenuItem key={p._id} value={p._id}>
+                      {p.nombreProducto}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  type="number"
+                  fullWidth
+                  label="Precio"
+                  value={producto.precio}
+                  onChange={(e) => handlePrecioChange(index, e.target.value)}
+                  required
+                  inputProps={{ min: "0", step: "0.01" }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={2}>
+                {productosSeleccionados.length > 1 && (
+                  <IconButton
+                    onClick={() => quitarProducto(index)}
+                    color="error"
+                    size="large"
+                  >
+                    <Delete />
+                  </IconButton>
+                )}
+              </Grid>
+            </Grid>
           ))}
-          <div className="flex flex-wrap justify-between mt-4 gap-2">
-            <button
-              type="button"
-              onClick={añadirProducto}
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
-            >
-              Añadir otro producto
-            </button>
-            <div>
-              <button
-                type="button"
-                onClick={onClose}
-                className="mr-2 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
-              >
-                Guardar
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
+          <Button
+            onClick={añadirProducto}
+            startIcon={<Add />}
+            variant="outlined"
+            color="primary"
+            sx={{ marginBottom: 2 }}
+          >
+            Añadir otro producto
+          </Button>
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={guardarProducto} type="submit" variant="contained" color="primary">
+          Guardar
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

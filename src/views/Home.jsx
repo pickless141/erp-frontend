@@ -1,49 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import Layout from '../components/Layout';
-import Pagination from '../components/Pagination';
-import ClienteTiendaDetail from './clientes/ClienteTiendaDetail';
-import EditarCliente from './clientes/EditarCliente';
-import useStore from '../store';
-import Swal from 'sweetalert2';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import Layout from "../components/Layout";
+import Pagination from "../components/Pagination";
+import ClienteTiendaDetail from "./clientes/ClienteTiendaDetail";
+import EditarCliente from "./clientes/EditarCliente";
+import NuevoCliente from "./clientes/NuevoCliente"; 
+import { useClientesStore, useGeneralStore } from "../store/index";
+import Swal from "sweetalert2";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 const Home = () => {
   const navigate = useNavigate();
-  const { clientes, fetchClientes, eliminarItem } = useStore(state => ({
+
+  const { clientes, fetchClientes } = useClientesStore((state) => ({
     clientes: state.clientes,
     fetchClientes: state.fetchClientes,
-    eliminarItem: state.eliminarItem,
   }));
+
+  const { eliminarItem, searchTerm, setSearchTerm, currentPage, setCurrentPage, resetCurrentPage, resetSearchTerm } = useGeneralStore((state) => ({
+    eliminarItem: state.eliminarItem,
+    searchTerm: state.searchTerm,
+    setSearchTerm: state.setSearchTerm,
+    currentPage: state.currentPage,
+    setCurrentPage: state.setCurrentPage,
+    resetCurrentPage: state.resetCurrentPage,
+    resetSearchTerm: state.resetSearchTerm,
+  }));
+
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
   const [clienteEditarId, setClienteEditarId] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
+  const [isNuevoClienteModalOpen, setIsNuevoClienteModalOpen] = useState(false); // Estado para el modal
 
   useEffect(() => {
-    fetchClientes(currentPage, searchTerm);
-  }, [currentPage, searchTerm, fetchClientes]);
+    resetCurrentPage();
+    resetSearchTerm();
+    fetchClientes(1, "");
+  }, [fetchClientes, resetCurrentPage, resetSearchTerm]);
 
   const confirmarEliminarCliente = (clienteId) => {
     Swal.fire({
-      title: '¿Estás seguro?',
+      title: "¿Estás seguro?",
       text: "Esta acción no se puede revertir. ¿Deseas eliminar el cliente?",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        eliminarItem('clientes', clienteId, {
+        eliminarItem("clientes", clienteId, {
           onSuccess: () => {
-            Swal.fire('Eliminado!', 'El cliente ha sido eliminado.', 'success');
+            Swal.fire("Eliminado!", "El cliente ha sido eliminado.", "success");
             fetchClientes(currentPage, searchTerm);
           },
           onError: () => {
-            Swal.fire('Error!', 'No se pudo eliminar el cliente.', 'error');
-          }
+            Swal.fire("Error!", "No se pudo eliminar el cliente.", "error");
+          },
         });
       }
     });
@@ -53,7 +66,7 @@ const Home = () => {
     if (clienteId) {
       setClienteSeleccionado(clienteId);
     } else {
-      console.error('clienteId es undefined');
+      console.error("clienteId es undefined");
     }
   };
 
@@ -63,7 +76,7 @@ const Home = () => {
       setClienteSeleccionado(clienteId);
       navigate(`/editarcliente/${clienteId}`);
     } else {
-      console.error('clienteId es undefined');
+      console.error("clienteId es undefined");
     }
   };
 
@@ -74,7 +87,8 @@ const Home = () => {
 
   const handleSearch = (term) => {
     setSearchTerm(term);
-    setCurrentPage(1);
+    resetCurrentPage();
+    fetchClientes(1, term);
   };
 
   const pageCount = Math.ceil(clientes.totalDocs / clientes.limit);
@@ -83,12 +97,12 @@ const Home = () => {
     <Layout>
       <h1 className="text-2xl text-gray-800 font-light mb-6">Clientes</h1>
       <div className="flex flex-col md:flex-row justify-between mb-6">
-        <Link
-          to="/nuevocliente"
+        <button
+          onClick={() => setIsNuevoClienteModalOpen(true)} 
           className="bg-blue-800 py-2 px-5 inline-block text-white rounded text-sm hover:bg-gray-800 mb-3 uppercase font-bold w-full md:w-auto text-center md:mr-3 transition-colors duration-300"
         >
           Nuevo Cliente
-        </Link>
+        </button>
         <input
           type="text"
           placeholder="Buscar por nombre de cliente"
@@ -147,7 +161,7 @@ const Home = () => {
 
       <Pagination
         currentPage={currentPage}
-        pageCount={Math.ceil(clientes.totalDocs / clientes.limit)}
+        pageCount={pageCount}
         onPageChange={handlePageChange}
         totalDocs={clientes.totalDocs}
         limit={clientes.limit}
@@ -155,6 +169,7 @@ const Home = () => {
 
       {clienteSeleccionado && <ClienteTiendaDetail clienteId={clienteSeleccionado} />}
       {clienteEditarId && <EditarCliente clienteId={clienteEditarId} />}
+      <NuevoCliente open={isNuevoClienteModalOpen} onClose={() => setIsNuevoClienteModalOpen(false)} /> {/* Modal de NuevoCliente */}
     </Layout>
   );
 };

@@ -1,27 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { FaTrash } from 'react-icons/fa';
 import Layout from '../../components/Layout';
 import Pagination from '../../components/Pagination';
 import { Link } from 'react-router-dom';
-import useStore from '../../store';
+import { useProduccionesStore, useGeneralStore } from '../../store/index';
 
 function Producciones() {
-  const { producciones, totalDocs, limit, fetchProducciones, eliminarItem } = useStore(state => ({
+  const { producciones, fetchProducciones } = useProduccionesStore((state) => ({
     producciones: state.producciones.docs,
     totalDocs: state.producciones.totalDocs,
     limit: state.producciones.limit,
     fetchProducciones: state.fetchProducciones,
-    eliminarItem: state.eliminarItem
   }));
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(Math.ceil(totalDocs / limit));
+
+  const { eliminarItem, currentPage, setCurrentPage, resetCurrentPage } = useGeneralStore((state) => ({
+    eliminarItem: state.eliminarItem,
+    currentPage: state.currentPage,
+    setCurrentPage: state.setCurrentPage,
+    resetCurrentPage: state.resetCurrentPage,
+  }));
+
+  const totalPages = Math.ceil(producciones.totalDocs / producciones.limit);
 
   useEffect(() => {
-    fetchProducciones(currentPage);
-    const totalPages = Math.ceil(totalDocs / limit);
-    setTotalPages(totalPages);
-  }, [currentPage, fetchProducciones, totalDocs, limit]);
+    resetCurrentPage(); 
+    fetchProducciones(1); 
+  }, [fetchProducciones, resetCurrentPage]);
 
   const confirmarEliminarProduccion = (produccionId) => {
     Swal.fire({
@@ -37,12 +42,12 @@ function Producciones() {
       if (result.isConfirmed) {
         eliminarItem('producciones', produccionId, {
           onSuccess: () => {
-            fetchProducciones(currentPage); 
+            fetchProducciones(currentPage);
             Swal.fire('Eliminado!', 'La producción ha sido eliminada.', 'success');
           },
           onError: () => {
             Swal.fire('Error!', 'No se pudo eliminar la producción.', 'error');
-          }
+          },
         });
       }
     });
@@ -75,10 +80,12 @@ function Producciones() {
           <tbody className="bg-white">
             {producciones.map((produccion, index) => (
               <tr key={index} className="hover:bg-gray-100">
-                <td className="border px-4 py-2 text-gray-700 text-center">{produccion.producto ? produccion.producto.nombreProducto : 'Producto no disponible'}</td>
+                <td className="border px-4 py-2 text-gray-700 text-center">
+                  {produccion.producto ? produccion.producto.nombreProducto : 'Producto no disponible'}
+                </td>
                 <td className="border px-4 py-2 text-center">{produccion.cantidadProducida}</td>
-                <td className="border px-4 py-2 text-center">{new Date(produccion.fechaProduccion).toLocaleString()}</td> 
-                <td className="border px-4 py-2 text-center">{produccion.numeroLote}</td> 
+                <td className="border px-4 py-2 text-center">{new Date(produccion.fechaProduccion).toLocaleString()}</td>
+                <td className="border px-4 py-2 text-center">{produccion.numeroLote}</td>
                 <td className="border px-4 py-2 text-center">{new Date(produccion.fechaVencimiento).toLocaleDateString()}</td>
                 <td className="border px-4 py-2 text-center">
                   <div className="flex justify-center items-center space-x-2">
@@ -95,14 +102,17 @@ function Producciones() {
           </tbody>
         </table>
       </div>
-      
+
       <Pagination
         currentPage={currentPage}
         pageCount={totalPages}
-        onPageChange={setCurrentPage}
-        totalDocs={totalDocs}
-        limit={limit}
-      />  
+        onPageChange={(page) => {
+          setCurrentPage(page);
+          fetchProducciones(page);
+        }}
+        totalDocs={producciones.totalDocs}
+        limit={producciones.limit}
+      />
     </Layout>
   );
 }

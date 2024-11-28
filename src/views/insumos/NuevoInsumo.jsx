@@ -117,6 +117,7 @@ function NuevoInsumo() {
                 <option value="oz">oz</option>
                 <option value="l">l</option>
                 <option value="ml">ml</option>
+                <option value="uni">uni</option>
               </select>
             </div>
           </div>
@@ -138,7 +139,7 @@ function NuevoInsumo() {
               type="submit"
               className="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
-              Crear Insumo
+              Crear
             </button>
             <Link
               to="/insumos"

@@ -1,240 +1,248 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Select from 'react-select';
-import Layout from '../../components/Layout';
-import { Link } from 'react-router-dom';
-import useStore from '../../store';
+import React, { useState, useEffect } from "react";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Typography, Alert, Box, IconButton } from "@mui/material";
+import Select from "react-select";
+import { useNavigate } from "react-router-dom";
+import { Delete } from "@mui/icons-material";
+import axios from "axios";
+import { useProductosStore } from "../../store";
 
-const NuevaTienda = () => {
+const NuevaTienda = ({ open, onClose }) => {
+  const navigate = useNavigate();
   const [tienda, setTienda] = useState({
     cliente: null,
-    nombreCliente: '',
-    nombreTienda: '',
-    direccion: '',
-    descripcion: '',
+    nombreTienda: "",
+    direccion: "",
+    descripcion: "",
     productos: [],
   });
-  
   const [clientesOptions, setClientesOptions] = useState([]);
-  
   const [exito, setExito] = useState(null);
   const [error, setError] = useState(null);
-  
-  const { productos, fetchProductos } = useStore(state => ({
+
+  const { productos, fetchProductos } = useProductosStore((state) => ({
     productos: state.productos,
     fetchProductos: state.fetchProductos,
   }));
-  
-  const productosOptions = productos.map(producto => ({
+
+  const productosOptions = productos.map((producto) => ({
     value: producto._id,
     label: producto.nombreProducto,
   }));
 
+  useEffect(() => {
+    const obtenerClientes = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_SERVER;
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`${apiUrl}/clientes/clienteSelect`, {
+          headers: { "x-auth-token": token },
+        });
+        const clientes = response.data.map((cliente) => ({
+          value: cliente._id,
+          label: cliente.nombre,
+        }));
+        setClientesOptions(clientes);
+      } catch (error) {
+        console.error("Error al obtener los clientes:", error);
+      }
+    };
+    
+    obtenerClientes();
+    fetchProductos();
+  }, [fetchProductos]);
+
   const handleInputChange = (name, value) => {
-    setTienda(prevTienda => ({
+    setTienda((prevTienda) => ({
       ...prevTienda,
       [name]: value,
     }));
   };
 
-  const handleClienteChange = selectedOption => {
-    handleInputChange('cliente', selectedOption);
-    handleInputChange('nombreCliente', selectedOption.label);
-  };
-
-  const handleProductoChange = selectedOptions => {
-    handleInputChange('productos', selectedOptions.map(producto => ({ _id: producto.value, nombre: producto.label, precio: '' })));
+  const handleProductoChange = (selectedOptions) => {
+    handleInputChange(
+      "productos",
+      selectedOptions.map((producto) => ({
+        _id: producto.value,
+        nombre: producto.label,
+        precio: "",
+      }))
+    );
   };
 
   const handlePrecioChange = (index, precio) => {
     const nuevosProductos = [...tienda.productos];
     nuevosProductos[index].precio = precio;
-    setTienda(prevTienda => ({
+    setTienda((prevTienda) => ({
       ...prevTienda,
       productos: nuevosProductos,
     }));
   };
 
-  const obtenerClientes = async () => {
-    try {
-      const apiUrl = import.meta.env.VITE_API_SERVER;
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${apiUrl}/clientes/clienteSelect`, {
-        headers: {
-          'x-auth-token': token,
-        },
-      });
-      const clientes = response.data.map(cliente => ({
-        value: cliente._id,
-        label: cliente.nombre,
-      }));
-      setClientesOptions(clientes);
-    } catch (error) {
-      console.error('Error al obtener los clientes:', error);
-    }
+  const eliminarProducto = (index) => {
+    const nuevosProductos = [...tienda.productos];
+    nuevosProductos.splice(index, 1);
+    setTienda((prevTienda) => ({
+      ...prevTienda,
+      productos: nuevosProductos,
+    }));
   };
 
-  useEffect(() => {
-    obtenerClientes();
-    fetchProductos();
-  }, [fetchProductos]);
-
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       const apiUrl = import.meta.env.VITE_API_SERVER;
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/tiendas`, {
-        method: 'POST',
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${apiUrl}/tiendas/`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token,
+          "Content-Type": "application/json",
+          "x-auth-token": token,
         },
         body: JSON.stringify({
           ...tienda,
-          productos: tienda.productos.map(producto => ({ producto: producto._id, precio: producto.precio })),
-        })
+          nombreCliente: tienda.cliente, 
+          productos: tienda.productos.map((producto) => ({
+            producto: producto._id,
+            precio: producto.precio,
+          })),
+        }),
       });
-
+  
       if (response.ok) {
-        setExito('Tienda creada exitosamente');
+        setExito("Tienda creada exitosamente");
         setTimeout(() => {
-          window.location.href = '/tiendas';
+          onClose();
+          navigate("/tiendas");
         }, 2000);
       } else {
-        setError('Error al crear una nueva tienda');
+        setError("Error al crear una nueva tienda");
       }
     } catch (error) {
       console.error(error);
-      setError('Error al crear una nueva tienda');
+      setError("Error al crear una nueva tienda");
     }
   };
 
   return (
-    <Layout>
-      <div className="max-w-4xl mx-auto bg-white p-8 shadow-md rounded">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Lado Izquierdo: Cliente, Tienda, Dirección, Descripción */}
-          <div>
-            <h1 className="text-2xl text-gray-800 font-light mb-4">Nueva Tienda</h1>
-            {exito && (
-              <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
-                {exito}
-              </div>
-            )}
-            {error && (
-              <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
-                {error}
-              </div>
-            )}
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="nombreCliente">
-                  Nombre del Cliente:
-                </label>
-                <Select
-                  options={clientesOptions}
-                  onChange={handleClienteChange}
-                  value={tienda.cliente}
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="nombreTienda">
-                  Nombre de la Tienda:
-                </label>
-                <input
-                  type="text"
-                  id="nombreTienda"
-                  name="nombreTienda"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  onChange={e => handleInputChange('nombreTienda', e.target.value)}
-                  value={tienda.nombreTienda}
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="direccion">
-                  Dirección:
-                </label>
-                <input
-                  type="text"
-                  id="direccion"
-                  name="direccion"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  onChange={e => handleInputChange('direccion', e.target.value)}
-                  value={tienda.direccion}
-                  required
-                />
-              </div>
-              <div className="mb-6">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="descripcion">
-                  Descripción:
-                </label>
-                <textarea
-                  id="descripcion"
-                  name="descripcion"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  onChange={e => handleInputChange('descripcion', e.target.value)}
-                  value={tienda.descripcion}
-                />
-              </div>
-            </form>
-          </div>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth={tienda.productos.length > 0 ? "md" : "sm"} 
+      fullWidth
+    >
+      <DialogTitle>Nueva Tienda</DialogTitle>
+      <DialogContent>
+        {exito && <Alert severity="success" sx={{ mb: 2 }}>{exito}</Alert>}
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-          {/* Lado Derecho: Selección de Productos y Precios */}
-          <div>
-            <h2 className="text-2xl text-gray-800 font-light mb-4">Productos</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="productos">
-                  Seleccionar Productos:
-                </label>
-                <Select
-                  options={productosOptions}
-                  isMulti
-                  onChange={handleProductoChange}
-                  value={tienda.productos.map(producto => ({ value: producto._id, label: producto.nombre }))}
-                />
-              </div>
+        <Box display="flex" flexDirection={{ xs: "column", md: tienda.productos.length > 0 ? "row" : "column" }} gap={3}>
+          {/* Columna Izquierda */}
+          <Box flex={1} width={tienda.productos.length > 0 ? "50%" : "100%"}>
+            <Typography variant="h6" gutterBottom>Información de la Tienda</Typography>
+            <Select
+              options={clientesOptions}
+              onChange={(option) => handleInputChange("cliente", option?.value)}
+              value={clientesOptions.find((option) => option.value === tienda.cliente) || null}
+              placeholder="Seleccionar Cliente"
+              className="mb-4"
+              menuPortalTarget={document.body}
+              styles={{
+                menuPortal: (base) => ({ ...base, zIndex: 1300 }),
+              }}
+            />
+            <TextField
+              label="Nombre de la Tienda"
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              value={tienda.nombreTienda}
+              onChange={(e) => handleInputChange("nombreTienda", e.target.value)}
+              required
+            />
+            <TextField
+              label="Dirección"
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              value={tienda.direccion}
+              onChange={(e) => handleInputChange("direccion", e.target.value)}
+              required
+            />
+            <TextField
+              label="Descripción"
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              rows={3}
+              value={tienda.descripcion}
+              onChange={(e) => handleInputChange("descripcion", e.target.value)}
+            />
+            <Typography variant="h6" gutterBottom className="mt-4">Productos</Typography>
+            <Select
+              options={productosOptions}
+              isMulti
+              onChange={handleProductoChange}
+              value={tienda.productos.map((producto) => ({ value: producto._id, label: producto.nombre }))}
+              placeholder="Seleccionar Productos"
+              className="mb-4"
+            />
+          </Box>
+
+          {/* Columna Derecha */}
+          {tienda.productos.length > 0 && (
+            <Box flex={1}>
+              <Typography variant="h6" gutterBottom>Productos Seleccionados</Typography>
               {tienda.productos.map((producto, index) => (
-                <div key={index} className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`precio-${index}`}>
-                    Precio de {producto.nombre}:
-                  </label>
-                  <input
+                <Box
+                  key={producto._id}
+                  display="flex"
+                  alignItems="center"
+                  gap={2}
+                  mb={2}
+                  sx={{
+                    position: "relative",
+                    "&:hover .delete-icon": {
+                      visibility: "visible",
+                    },
+                  }}
+                >
+                  <TextField
+                    label={`Precio de ${producto.nombre}`}
+                    variant="outlined"
                     type="number"
-                    id={`precio-${index}`}
-                    name={`precio-${index}`}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={producto.precio}
-                    onChange={e => handlePrecioChange(index, e.target.value)}
+                    onChange={(e) => handlePrecioChange(index, e.target.value)}
                     required
+                    fullWidth
                   />
-                </div>
+                  <Box
+                    className="delete-icon"
+                    sx={{
+                      visibility: "hidden", 
+                      cursor: "pointer",
+                    }}
+                  >
+                    <IconButton onClick={() => eliminarProducto(index)} color="error">
+                      <Delete/>
+                    </IconButton>
+                  </Box>
+                </Box>
               ))}
-              {/* Botones de acción */}
-              <div className="flex items-center justify-between mt-4">
-                <button
-                  type="submit"
-                  onClick={handleSubmit}
-                  className="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                  Crear Tienda
-                </button>
-                <Link
-                  to="/tiendas"
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                  Volver
-                </Link>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </Layout>
+            </Box>
+          )}
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>
+          Cancelar
+        </Button>
+        <Button onClick={handleSubmit} color="primary" variant="contained">
+          Crear
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
-export default NuevaTienda;
+export default NuevaTienda; 

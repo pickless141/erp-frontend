@@ -124,7 +124,7 @@ const NuevaProduccion = () => {
               type="submit"
               className="bg-blue-800 hover-bg-blue-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
-              Registrar Producción
+              Registrar
             </button>
             <Link to="/producciones" className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
               Volver

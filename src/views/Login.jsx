@@ -27,18 +27,33 @@ const Login = () => {
         },
         body: JSON.stringify(values),
       });
-
+  
       if (response.status === 200) {
         const data = await response.json();
-        const { token, refreshToken, nombre, apellido } = data;
-
-        // Almacenar el token en Local Storage
+        const { token, nombre, apellido, roles } = data;
+  
+        if (!roles || !Array.isArray(roles)) {
+          console.error('Error: roles no definido o no es un array.');
+          throw new Error('Error en la estructura de los datos de roles.');
+        }
+  
         localStorage.setItem('token', token);
-        localStorage.setItem('refreshToken', refreshToken); 
         localStorage.setItem('nombre', nombre);
         localStorage.setItem('apellido', apellido);
-
-        window.location.href = '/home';
+        localStorage.setItem('roles', JSON.stringify(roles));
+        
+        if (roles.includes('admin')) {
+          window.location.href = '/home';
+        } else if (roles.includes('vendedor')) {
+          window.location.href = '/pedidos';
+        } else if (roles.includes('repositor')) {
+          window.location.href = '/reposiciones';
+        } else if (roles.includes('tercerizado')) {
+          window.location.href = '/reposiciones';
+        } else {
+          console.error('Rol desconocido. Redirigiendo a una página predeterminada.');
+          window.location.href = '/';
+        }
       } else if (response.status === 401) {
         setFieldError('password', 'Contraseña incorrecta');
       } else {
@@ -47,7 +62,7 @@ const Login = () => {
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
     }
-
+  
     setSubmitting(false);
   };
 

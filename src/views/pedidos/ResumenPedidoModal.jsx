@@ -1,79 +1,107 @@
-import { Dialog } from '@headlessui/react';
-import { useState, useEffect } from 'react';
-import { RiCloseLine } from 'react-icons/ri';
-import Swal from 'sweetalert2';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Typography,
+  Button,
+  CircularProgress,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  Box
+} from "@mui/material";
+import { Close } from "@mui/icons-material";
+import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 
-const ResumenPedidoModal = ({ isOpen, closeModal, pedidoId }) => {
+const ResumenPedidoModal = ({ open, onClose, pedidoId }) => {
   const [productos, setProductos] = useState([]);
-  const [nombreTienda, setNombreTienda] = useState('');
+  const [nombreTienda, setNombreTienda] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (isOpen && pedidoId) {
+    if (open && pedidoId) {
       setLoading(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const apiUrl = import.meta.env.VITE_API_SERVER;
 
       fetch(`${apiUrl}/pedidos/${pedidoId}/resumen`, {
         headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token,
+          "Content-Type": "application/json",
+          "x-auth-token": token,
         },
       })
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
           if (data.error) {
-            Swal.fire('Error', data.error, 'error');
+            Swal.fire("Error", data.error, "error");
           } else {
             setProductos(data.pedidos || []);
-            setNombreTienda(data.tienda ? data.tienda.nombre : '');
+            setNombreTienda(data.tienda ? data.tienda.nombre : "");
           }
           setLoading(false);
         })
-        .catch(error => {
-          console.error('Error fetching resumen del pedido:', error);
-          Swal.fire('Error', 'Error al cargar el resumen del pedido', 'error');
+        .catch((error) => {
+          console.error("Error fetching resumen del pedido:", error);
+          Swal.fire("Error", "Error al cargar el resumen del pedido", "error");
           setLoading(false);
         });
     }
-  }, [isOpen, pedidoId]);
+  }, [open, pedidoId]);
 
   useEffect(() => {
-    if (!isOpen) {
+    if (!open) {
       setProductos([]);
-      setNombreTienda('');
+      setNombreTienda("");
       setLoading(true);
     }
-  }, [isOpen]);
+  }, [open]);
 
   return (
-    <Dialog open={isOpen} onClose={closeModal} className="fixed z-10 inset-0 overflow-y-auto">
-      <div className="flex items-center justify-center min-h-screen">
-        <Dialog.Panel className="w-full max-w-md p-6 bg-white rounded shadow-lg relative">
-          <button
-            onClick={closeModal}
-            className="absolute top-3 right-3 text-red-500 hover:text-red-700"
-            aria-label="Cerrar"
-          >
-            <RiCloseLine size={24} />
-          </button>
-          <Dialog.Title className="text-lg font-bold">
-            Pedido de: {nombreTienda || 'Sin nombre de tienda'}
-          </Dialog.Title>
-          {loading ? (
-            <p>Cargando...</p>
-          ) : productos.length > 0 ? (
-            productos.map((articulo) => (
-              <div key={articulo._id} className="mt-2">
-                <p>Producto: {articulo.producto}</p>
-                <p>Cantidad: {articulo.cantidad}</p>
-              </div>
-            ))
-          ) : (
-            <p>No hay productos en este pedido.</p>
-          )}
-        </Dialog.Panel>
-      </div>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle>
+        Resumen del Pedido
+        <Button
+          onClick={onClose}
+          color="error"
+          startIcon={<Close />}
+          sx={{ position: "absolute", right: 16, top: 16 }}
+        >
+          Cerrar
+        </Button>
+      </DialogTitle>
+      <DialogContent dividers>
+        {loading ? (
+          <Box display="flex" justifyContent="center" alignItems="center" py={3}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <>
+            <Typography variant="h6" gutterBottom>
+              Tienda: {nombreTienda || "Sin nombre de tienda"}
+            </Typography>
+            <Divider sx={{ my: 2 }} />
+            {productos.length > 0 ? (
+              <List>
+                {productos.map((articulo, index) => (
+                  <ListItem key={index} divider>
+                    <ListItemText
+                      primary={`Producto: ${articulo.producto}`}
+                      secondary={`Cantidad: ${articulo.cantidad}`}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              <Typography variant="body2" color="textSecondary">
+                No hay productos en este pedido.
+              </Typography>
+            )}
+          </>
+        )}
+      </DialogContent>
     </Dialog>
   );
 };

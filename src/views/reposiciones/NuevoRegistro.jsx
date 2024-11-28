@@ -3,10 +3,21 @@ import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import axios from 'axios';
 import Layout from '../../components/Layout';
-import useStore from '../../store';
+import { useTiendasStore, useProductosStore } from '../../store/index';
 
 const NuevoRegistro = () => {
-  const { tiendaSelect, fetchTiendaSelect, productos, fetchProductos } = useStore();
+  const navigate = useNavigate();
+
+  const { tiendaSelect, fetchTiendaSelect } = useTiendasStore((state) => ({
+    tiendaSelect: state.tiendaSelect,
+    fetchTiendaSelect: state.fetchTiendaSelect,
+  }));
+
+  const { productos, fetchProductos } = useProductosStore((state) => ({
+    productos: state.productos,
+    fetchProductos: state.fetchProductos,
+  }));
+
   const [tienda, setTienda] = useState(null);
   const [categoria, setCategoria] = useState(null);
   const [productosFiltrados, setProductosFiltrados] = useState([]);
@@ -14,8 +25,6 @@ const NuevoRegistro = () => {
   const [cantidadesDeposito, setCantidadesDeposito] = useState({});
   const [cantidadesSugeridas, setCantidadesSugeridas] = useState({});
   const [cantidadesVencidas, setCantidadesVencidas] = useState({});
-  const navigate = useNavigate();
-
   const [exito, setExito] = useState(null);
   const [error, setError] = useState(null);
 
@@ -32,15 +41,15 @@ const NuevoRegistro = () => {
     }
   }, [categoria, productos]);
 
-  const handleTiendaChange = selectedOption => {
+  const handleTiendaChange = (selectedOption) => {
     setTienda(selectedOption);
   };
 
-  const handleCategoriaChange = selectedOption => {
+  const handleCategoriaChange = (selectedOption) => {
     setCategoria(selectedOption);
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
@@ -48,29 +57,24 @@ const NuevoRegistro = () => {
 
       const reposicionData = {
         tiendaId: tienda.value,
-        productos: productosFiltrados.map(producto => ({
+        productos: productosFiltrados.map((producto) => ({
           producto: producto._id,
           cantidadExhibida: cantidadesExhibidas[producto._id] || 0,
           deposito: cantidadesDeposito[producto._id] || 0,
           sugerido: cantidadesSugeridas[producto._id] || 0,
           vencidos: cantidadesVencidas[producto._id] || 0,
         })),
-        categoria: categoria.value
+        categoria: categoria.value,
       };
 
-      const response = await axios.post(
-        `${apiUrl}/reposiciones/`,
-        reposicionData,
-        {
-          headers: {
-            'x-auth-token': token,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      await axios.post(`${apiUrl}/reposiciones/`, reposicionData, {
+        headers: {
+          'x-auth-token': token,
+          'Content-Type': 'application/json',
+        },
+      });
 
       setExito('Reposición creada exitosamente');
-
       setTimeout(() => {
         navigate('/reposiciones');
       }, 2000);
@@ -126,7 +130,7 @@ const NuevoRegistro = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {productosFiltrados.map(producto => (
+                  {productosFiltrados.map((producto) => (
                     <tr key={producto._id}>
                       <td className="py-2 px-4 border-b">{producto.nombreProducto}</td>
                       <td className="py-2 px-4 border-b">
@@ -134,12 +138,12 @@ const NuevoRegistro = () => {
                           type="number"
                           className="w-16 px-2 py-1 border rounded"
                           value={cantidadesExhibidas[producto._id] || ''}
-                          onChange={e => {
-                            setCantidadesExhibidas(prevState => ({
+                          onChange={(e) =>
+                            setCantidadesExhibidas((prevState) => ({
                               ...prevState,
                               [producto._id]: e.target.value,
-                            }));
-                          }}
+                            }))
+                          }
                         />
                       </td>
                       <td className="py-2 px-4 border-b">
@@ -147,12 +151,12 @@ const NuevoRegistro = () => {
                           type="number"
                           className="w-16 px-2 py-1 border rounded"
                           value={cantidadesDeposito[producto._id] || ''}
-                          onChange={e => {
-                            setCantidadesDeposito(prevState => ({
+                          onChange={(e) =>
+                            setCantidadesDeposito((prevState) => ({
                               ...prevState,
                               [producto._id]: e.target.value,
-                            }));
-                          }}
+                            }))
+                          }
                         />
                       </td>
                       <td className="py-2 px-4 border-b">
@@ -160,12 +164,12 @@ const NuevoRegistro = () => {
                           type="number"
                           className="w-16 px-2 py-1 border rounded"
                           value={cantidadesSugeridas[producto._id] || ''}
-                          onChange={e => {
-                            setCantidadesSugeridas(prevState => ({
+                          onChange={(e) =>
+                            setCantidadesSugeridas((prevState) => ({
                               ...prevState,
                               [producto._id]: e.target.value,
-                            }));
-                          }}
+                            }))
+                          }
                         />
                       </td>
                       <td className="py-2 px-4 border-b">
@@ -173,12 +177,12 @@ const NuevoRegistro = () => {
                           type="number"
                           className="w-16 px-2 py-1 border rounded"
                           value={cantidadesVencidas[producto._id] || ''}
-                          onChange={e => {
-                            setCantidadesVencidas(prevState => ({
+                          onChange={(e) =>
+                            setCantidadesVencidas((prevState) => ({
                               ...prevState,
                               [producto._id]: e.target.value,
-                            }));
-                          }}
+                            }))
+                          }
                         />
                       </td>
                     </tr>
@@ -189,10 +193,7 @@ const NuevoRegistro = () => {
           )}
 
           <div className="flex items-center justify-center mt-4">
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            >
+            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
               Guardar
             </button>
             <button

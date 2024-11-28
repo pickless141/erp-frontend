@@ -3,15 +3,18 @@ import { useNavigate, Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
 import Layout from '../../components/Layout';
-import useStore from '../../store';
+import { useTiendasStore } from '../../store/index';  
 import axios from 'axios';
 
 const NuevoPedido = () => {
     const navigate = useNavigate();
-    const { tiendaSelect, fetchTiendaSelect } = useStore((state) => ({
+
+    // Usar el estado `useTiendasStore`
+    const { tiendaSelect, fetchTiendaSelect } = useTiendasStore((state) => ({
         tiendaSelect: state.tiendaSelect,
-        fetchTiendaSelect: state.fetchTiendaSelect
+        fetchTiendaSelect: state.fetchTiendaSelect,
     }));
+
     const [tienda, setTienda] = useState(null);
     const [productos, setProductos] = useState([]);
     const [cantidades, setCantidades] = useState({});

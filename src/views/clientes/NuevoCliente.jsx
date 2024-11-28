@@ -1,15 +1,12 @@
-import React, { useState } from 'react';
-import Layout from '../../components/Layout';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Alert, Box } from "@mui/material";
 
-const NuevoCliente = () => {
-  const navigate = useNavigate();
+const NuevoCliente = ({ open, onClose }) => {
   const [cliente, setCliente] = useState({
-    nombre: '',
-    ruc: '',
-    telefono: '',
+    nombre: "",
+    ruc: "",
+    telefono: "",
   });
-
   const [alerta, setAlerta] = useState(null);
 
   const handleInputChange = (e) => {
@@ -22,94 +19,77 @@ const NuevoCliente = () => {
 
     try {
       const apiUrl = import.meta.env.VITE_API_SERVER;
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const response = await fetch(`${apiUrl}/clientes`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token,
+          "Content-Type": "application/json",
+          "x-auth-token": token,
         },
         body: JSON.stringify(cliente),
       });
 
       if (response.ok) {
-        setAlerta('Cliente creado exitosamente');
+        setAlerta({ message: "Cliente creado exitosamente", type: "success" });
         setTimeout(() => {
-          navigate('/home');;
+          onClose();
         }, 2000);
       } else {
-        setAlerta('Error al crear un nuevo cliente');
+        setAlerta({ message: "Error al crear un nuevo cliente", type: "error" });
       }
     } catch (error) {
       console.error(error);
-      setAlerta('Error al crear un nuevo cliente');
+      setAlerta({ message: "Error al crear un nuevo cliente", type: "error" });
     }
   };
 
   return (
-    <Layout>
-      <div className="max-w-md mx-auto">
-        <h1 className="text-2xl text-gray-800 font-light mb-4">Nuevo Cliente</h1>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle>Nuevo Cliente</DialogTitle>
+      <DialogContent>
         {alerta && (
-          <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
-            {alerta}
-          </div>
+          <Alert severity={alerta.type} sx={{ mb: 2 }}>
+            {alerta.message}
+          </Alert>
         )}
-        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="nombre">
-              Razon Social:
-            </label>
-            <input
-              type="text"
-              id="nombre"
-              name="nombre"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={handleInputChange}
-              value={cliente.nombre}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="ruc">
-              RUC:
-            </label>
-            <input
-              type="text"
-              id="ruc"
-              name="ruc"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={handleInputChange}
-              value={cliente.ruc}
-            />
-          </div>
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="telefono">
-              Teléfono:
-            </label>
-            <input
-              type="text"
-              id="telefono"
-              name="telefono"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={handleInputChange}
-              value={cliente.telefono}
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <button
-              type="submit"
-              className="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Crear Cliente
-            </button>
-            <Link to="/home" className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-              Volver
-            </Link>
-          </div>
-        </form>
-      </div>
-    </Layout>
+        <TextField
+          label="Razón Social"
+          name="nombre"
+          value={cliente.nombre}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          required
+        />
+        <TextField
+          label="RUC"
+          name="ruc"
+          value={cliente.ruc}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+          variant="outlined"
+        />
+        <TextField
+          label="Teléfono"
+          name="telefono"
+          value={cliente.telefono}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+          variant="outlined"
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>
+          Cancelar
+        </Button>
+        <Button onClick={handleSubmit} color="primary" variant="contained">
+          Crear
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
