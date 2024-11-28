@@ -193,7 +193,6 @@ const Reposiciones = () => {
         limit={limit}
       />
 
-      {/* Dialog para los detalles de la reposición */}
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
         <DialogTitle>
           Detalle de la Reposición

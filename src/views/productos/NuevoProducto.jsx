@@ -9,6 +9,7 @@ const NuevoProducto = () => {
     lote: '',
     codBarra: 0
   });
+  
 
   const [exito, setExito] = useState(null);
   const [error, setError] = useState(null);

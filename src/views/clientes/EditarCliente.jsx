@@ -15,6 +15,7 @@ const EditarCliente = () => {
 
   const [loading, setLoading] = useState(true);
 
+  
   useEffect(() => {
     const obtenerCliente = async () => {
       try {

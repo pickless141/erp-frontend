@@ -126,6 +126,7 @@ const EditarPedido = ({ pedidoId, onClose, onPedidoActualizado }) => {
       Swal.fire("Error", "No se pudo actualizar el pedido", "error");
     }
   };
+  
 
   return (
     <Dialog open={Boolean(open)} onClose={onClose} maxWidth="md" fullWidth>

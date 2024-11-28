@@ -58,6 +58,7 @@ const ProductoModal = ({ onClose, tiendaId }) => {
     setProductosSeleccionados(updatedProductos);
   };
 
+  
   const guardarProducto = async (e) => {
     e.preventDefault();
     const response = await fetch(`${apiUrl}/tiendas/${tiendaId}/nuevoproducto`, {

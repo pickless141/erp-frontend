@@ -24,6 +24,7 @@ function FacturasList() {
         return "#000000"; 
     }
   };
+  
 
   return (
     <TableContainer component={Paper} className="mt-6 shadow-md">

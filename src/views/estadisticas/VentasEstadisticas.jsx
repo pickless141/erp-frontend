@@ -21,6 +21,7 @@ const VentasEstadisticas = () => {
     fetchEstadisticasTiendas();
   }, [fetchEstadisticasTiendas]);
 
+  
   const tiendas = estadisticasTiendas.map((tienda) => tienda._id.nombreTienda);
   const pedidosCompletados = estadisticasTiendas.map((tienda) => tienda.totalPedidos);
   const ventasTotales = estadisticasTiendas.map((tienda) => tienda.totalVentas);

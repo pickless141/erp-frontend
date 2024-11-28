@@ -12,6 +12,7 @@ const ClienteTiendaDetail = () => {
   const [totalDocs, setTotalDocs] = useState(0);
   const [limit, setLimit] = useState(10);
 
+  
   useEffect(() => {
     const fetchTiendas = async () => {
       try {

@@ -11,7 +11,6 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const ReposicionesEstadisticas = () => {
   const navigate = useNavigate();
 
-  // Usar el estado `useEstadisticasStore`
   const { estadisticasReposiciones, fetchEstadisticasReposiciones } = useEstadisticasStore((state) => ({
     estadisticasReposiciones: state.estadisticasReposiciones,
     fetchEstadisticasReposiciones: state.fetchEstadisticasReposiciones,
@@ -21,11 +20,9 @@ const ReposicionesEstadisticas = () => {
     fetchEstadisticasReposiciones();
   }, [fetchEstadisticasReposiciones]);
 
-  // Extraer datos para el gráfico
   const usuarios = estadisticasReposiciones.map((usuario) => `${usuario._id.nombre} ${usuario._id.apellido}`);
   const totalReposiciones = estadisticasReposiciones.map((usuario) => usuario.totalReposiciones);
 
-  // Configuración de los datos del gráfico
   const data = {
     labels: usuarios,
     datasets: [
@@ -39,9 +36,8 @@ const ReposicionesEstadisticas = () => {
     ],
   };
 
-  // Opciones de configuración del gráfico
   const options = {
-    indexAxis: 'y', // Muestra las barras en horizontal
+    indexAxis: 'y', 
     responsive: true,
     plugins: {
       legend: { position: 'top' },

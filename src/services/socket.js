@@ -11,4 +11,5 @@ socket.on('disconnect', () => {
   console.log('Desconectado de Socket.IO');
 });
 
+
 export default socket;

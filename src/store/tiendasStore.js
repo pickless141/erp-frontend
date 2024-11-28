@@ -20,6 +20,7 @@ const useTiendasStore = create((set) => ({
 
   tiendaSelect: [],
   
+  
   fetchTiendaSelect: async () => {
     const apiUrl = import.meta.env.VITE_API_SERVER;
     const token = localStorage.getItem("token");

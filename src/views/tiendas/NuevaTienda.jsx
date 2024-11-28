@@ -87,6 +87,7 @@ const NuevaTienda = ({ open, onClose }) => {
     }));
   };
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
   

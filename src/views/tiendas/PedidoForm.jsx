@@ -99,7 +99,7 @@ const PedidoForm = ({ open, onClose, tiendaId, onPedidoConfirmado }) => {
         "success"
       );
       onPedidoConfirmado(); // Callback para recargar datos o cerrar el diálogo desde el componente padre
-      onClose(); // Cerrar el diálogo
+      onClose(); 
     } catch (error) {
       Swal.fire("Error", error.message, "error");
     }

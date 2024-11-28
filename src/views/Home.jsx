@@ -17,6 +17,7 @@ const Home = () => {
     fetchClientes: state.fetchClientes,
   }));
 
+  
   const { eliminarItem, searchTerm, setSearchTerm, currentPage, setCurrentPage, resetCurrentPage, resetSearchTerm } = useGeneralStore((state) => ({
     eliminarItem: state.eliminarItem,
     searchTerm: state.searchTerm,

@@ -20,7 +20,7 @@ import ProductoModal from "./ProductoModal";
 const DetalleTienda = ({ open, onClose, tiendaId }) => {
   const [tienda, setTienda] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isProductoModalOpen, setIsProductoModalOpen] = useState(false); // Estado para el modal de productos
+  const [isProductoModalOpen, setIsProductoModalOpen] = useState(false); 
 
   const fetchTiendaDetalle = async () => {
     try {

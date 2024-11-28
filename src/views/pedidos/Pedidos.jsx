@@ -40,6 +40,7 @@ const Pedidos = () => {
   const { docs, totalDocs, limit } = pedidos;
   const totalPages = Math.ceil(totalDocs / limit);
 
+  
 
   useEffect(() => {
     resetCurrentPage();

@@ -24,6 +24,7 @@ const Detalle = () => {
 
     fetchData();
   }, [reposicionId]);
+  
 
   return (
     <Layout>

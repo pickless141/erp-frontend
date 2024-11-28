@@ -21,6 +21,7 @@ function Producciones() {
     resetCurrentPage: state.resetCurrentPage,
   }));
 
+  
   const totalPages = Math.ceil(producciones.totalDocs / producciones.limit);
 
   useEffect(() => {

@@ -14,6 +14,7 @@ const NuevaProduccion = () => {
   const [exito, setExito] = useState(null);
   const [error, setError] = useState(null);
 
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProduccion({ ...produccion, [name]: value });

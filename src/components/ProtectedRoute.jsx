@@ -13,6 +13,7 @@ const getRolesFromStorage = () => {
   }
 };
 
+
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem('token');
   const roles = getRolesFromStorage();

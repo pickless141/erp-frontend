@@ -23,7 +23,6 @@ function Facturacion() {
             Agregar
           </Link>
 
-          {/* Icono de notificación */}
           <FacturaNotificacion />
         </div>
 

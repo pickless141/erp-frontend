@@ -4,6 +4,7 @@ import axios from "axios";
 const useClientesStore = create((set) => ({
   clientes: { docs: [], totalDocs: 0, limit: 5 },
   
+  
   fetchClientes: async (page = 1, search = "") => {
     const apiUrl = import.meta.env.VITE_API_SERVER;
     const token = localStorage.getItem("token");

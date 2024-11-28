@@ -28,6 +28,8 @@ const NuevoRegistro = () => {
   const [exito, setExito] = useState(null);
   const [error, setError] = useState(null);
 
+  
+
   useEffect(() => {
     fetchTiendaSelect();
     fetchProductos();

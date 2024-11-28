@@ -36,12 +36,13 @@ const Sidebar = () => {
         ],
       },
       { path: "/productos", label: "Productos" },
-      { path: "/facturacion", label: "Facturación" },
+      // { path: "/facturacion", label: "Facturación" },
       { path: "/estadisticas", label: "Estadísticas" },
       { path: "/producciones", label: "Producción" },
       { path: "/insumos", label: "Insumos" }
     );
   }
+  
 
   if (roles.includes("vendedor")) {
     menuOpciones.push(

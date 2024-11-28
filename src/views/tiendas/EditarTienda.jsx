@@ -151,7 +151,7 @@ const EditarTienda = ({ open, onClose, onUpdated, tiendaId }) => {
               onChange={handleInputChange}
               required
               margin="dense"
-              size="small" // Hace que el TextField sea más compacto
+              size="small" 
             />
             <TextField
               fullWidth

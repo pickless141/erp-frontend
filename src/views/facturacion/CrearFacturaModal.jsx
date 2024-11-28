@@ -43,6 +43,7 @@ const CrearFacturaModal = ({ open, onClose }) => {
     setCantidades((prev) => ({ ...prev, [productoId]: Number(value) }));
   };
 
+  
   const handleCrearFactura = async () => {
     const productosSeleccionados = productos
       .map((producto) => ({

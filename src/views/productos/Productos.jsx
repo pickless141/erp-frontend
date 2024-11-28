@@ -16,6 +16,7 @@ function Productos() {
   const { eliminarItem } = useGeneralStore((state) => ({
     eliminarItem: state.eliminarItem,
   }));
+  
 
   useEffect(() => {
     fetchProductos();

@@ -59,6 +59,7 @@ const ResumenPedidoModal = ({ open, onClose, pedidoId }) => {
     }
   }, [open]);
 
+  
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>

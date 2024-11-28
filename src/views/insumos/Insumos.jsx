@@ -24,6 +24,7 @@ const Insumos = () => {
     resetCurrentPage: state.resetCurrentPage,
     resetSearchTerm: state.resetSearchTerm,
   }));
+  
 
   const [insumoEditarId, setInsumoEditarId] = useState(null);
 

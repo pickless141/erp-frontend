@@ -29,7 +29,6 @@ function FacturaNotificacion() {
 
   return (
     <>
-      {/* Icono de campanita con contador */}
       <IconButton color="inherit" onClick={handleOpenModal} className="ml-4">
         <Badge badgeContent={notificacionesPersistentes.length} color="error">
           <NotificationsIcon />

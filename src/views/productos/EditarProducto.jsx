@@ -15,6 +15,7 @@ const EditarProducto = () => {
   const [error, setError] = useState(null);
 
   const [loading, setLoading] = useState(true);
+  
 
   useEffect(() => {
     const obtenerProducto = async () => {

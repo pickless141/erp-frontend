@@ -93,4 +93,5 @@ const NuevoCliente = ({ open, onClose }) => {
   );
 };
 
+
 export default NuevoCliente;

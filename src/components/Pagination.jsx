@@ -14,6 +14,7 @@ const Pagination = ({ currentPage, pageCount, onPageChange, totalDocs, limit }) 
     }
   
     
+    
     const resultsOnPage = Math.min(totalDocs - (currentPage - 1) * limit, limit);
   
     return (

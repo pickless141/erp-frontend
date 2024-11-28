@@ -14,6 +14,7 @@ const Header = () => {
     }
   }, []);
 
+  
   const cerrarSesion = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('nombre');

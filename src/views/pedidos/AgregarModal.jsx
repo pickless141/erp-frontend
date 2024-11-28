@@ -14,6 +14,7 @@ import { FaPlus } from "react-icons/fa";
 
 const AgregarModal = ({ isOpen, setIsOpen, productosTienda, agregarProducto }) => {
   return (
+    
     <Dialog open={isOpen} onClose={() => setIsOpen(false)} maxWidth="sm" fullWidth>
       <DialogTitle>Seleccionar Producto</DialogTitle>
       <DialogContent dividers>

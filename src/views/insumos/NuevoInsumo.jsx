@@ -15,6 +15,7 @@ function NuevoInsumo() {
   });
   const [exito, setExito] = useState(null);
   const [error, setError] = useState(null);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -9,7 +9,6 @@ import axios from 'axios';
 const NuevoPedido = () => {
     const navigate = useNavigate();
 
-    // Usar el estado `useTiendasStore`
     const { tiendaSelect, fetchTiendaSelect } = useTiendasStore((state) => ({
         tiendaSelect: state.tiendaSelect,
         fetchTiendaSelect: state.fetchTiendaSelect,

@@ -61,6 +61,7 @@ function EditarInsumo() {
           });
         }
     };
+    
 
     const handleUnidadChange = (e) => {
       const unidad = e.target.value;

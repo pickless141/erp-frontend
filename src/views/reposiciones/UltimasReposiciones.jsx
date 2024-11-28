@@ -22,6 +22,7 @@ const UltimasReposiciones = () => {
   const [error, setError] = useState(null); 
   const [dialogOpen, setDialogOpen] = useState(false); 
   const [detalleReposicion, setDetalleReposicion] = useState(null); 
+  
 
   const fetchTiendas = async () => {
     try {

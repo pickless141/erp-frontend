@@ -23,6 +23,7 @@ const PedidosTienda = () => {
   const [nombreTienda, setNombreTienda] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedPedido, setSelectedPedido] = useState(null);
+  
 
   useEffect(() => {
     const fetchPedidosPorTienda = async () => {

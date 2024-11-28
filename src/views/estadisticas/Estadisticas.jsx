@@ -12,6 +12,7 @@ const Estadisticas = () => {
   ];
 
   return (
+    
     <Layout>
       <div className="max-w-4xl mx-auto py-8">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">Selecciona una Estadística</h2>

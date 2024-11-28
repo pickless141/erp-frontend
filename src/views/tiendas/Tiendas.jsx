@@ -124,6 +124,7 @@ const Tiendas = () => {
     setSelectedTiendaId(tiendaId);
     setIsPedidoOpen(true);
   };
+  
 
   const closePedidoDialog = () => {
     setIsPedidoOpen(false);
