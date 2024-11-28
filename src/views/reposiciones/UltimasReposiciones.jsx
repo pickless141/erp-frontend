@@ -54,7 +54,6 @@ const UltimasReposiciones = () => {
     setCategorias(opcionesCategorias);
   };
 
-  // Función para cargar las reposiciones filtradas por tienda y categoría
   const fetchReposiciones = async (tiendaId, categoria) => {
     try {
       const token = localStorage.getItem("token");
@@ -76,13 +75,11 @@ const UltimasReposiciones = () => {
     }
   };
 
-  // Efecto para cargar las tiendas y categorías al montar el componente
   useEffect(() => {
     fetchTiendas();
     fetchCategorias();
   }, []);
 
-  // Manejo del cambio en el select d
   const handleTiendaChange = (selectedOption) => {
     setSelectedTienda(selectedOption);
     if (selectedOption && selectedCategoria) {

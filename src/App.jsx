@@ -180,7 +180,7 @@ function App() {
         <Route
           path="/ultimas-reposiciones"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'repositor', 'tercerizado', 'vendedor']}>
+            <ProtectedRoute allowedRoles={[]}>
               <UltimasReposiciones/>
             </ProtectedRoute>
           }
