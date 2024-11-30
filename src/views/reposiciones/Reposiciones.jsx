@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import moment, { formatDate } from "../../utils/moment";
 import Layout from "../../components/Layout";
 import Pagination from "../../components/Pagination";
 import Swal from "sweetalert2";
@@ -160,7 +161,7 @@ const Reposiciones = () => {
                   </button>
                 </td>
                 <td className="border px-4 py-2">
-                  {new Date(reposicion.fechaReposicion).toLocaleDateString()}
+                {formatDate(reposicion.fechaReposicion)}
                 </td>
                 <td className="border px-4 py-2">
                   {reposicion.productos.length > 0 &&
