@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import logo from "../assets/lievito-white.svg";
 
 const getRolesFromStorage = () => {
   const roles = localStorage.getItem("roles");
@@ -29,30 +30,22 @@ const Sidebar = () => {
       { path: "/tiendas", label: "Tiendas" },
       { path: "/pedidos", label: "Pedidos" },
       {
-        label: "Reposiciones", 
-        submenu: [
-          { path: "/reposiciones", label: "Ver Reposiciones" },
-          // { path: "/ultimas-reposiciones", label: "Últimas Reposiciones" },
-        ],
+        label: "Reposiciones",
+        submenu: [{ path: "/reposiciones", label: "Ver Reposiciones" }],
       },
       { path: "/productos", label: "Productos" },
-      // { path: "/facturacion", label: "Facturación" },
       { path: "/estadisticas", label: "Estadísticas" },
       { path: "/producciones", label: "Producción" },
       { path: "/insumos", label: "Insumos" }
     );
   }
-  
 
   if (roles.includes("vendedor")) {
     menuOpciones.push(
       { path: "/pedidos", label: "Pedidos" },
       {
-        label: "Reposiciones", 
-        submenu: [
-          { path: "/reposiciones", label: "Ver Reposiciones" },
-          // { path: "/ultimas-reposiciones", label: "Últimas Reposiciones" }
-        ],
+        label: "Reposiciones",
+        submenu: [{ path: "/reposiciones", label: "Ver Reposiciones" }],
       },
       { path: "/productos", label: "Productos" }
     );
@@ -62,10 +55,7 @@ const Sidebar = () => {
     menuOpciones.push(
       {
         label: "Reposiciones",
-        submenu: [
-          { path: "/reposiciones", label: "Ver Reposiciones" },
-          // { path: "/ultimas-reposiciones", label: "Últimas Reposiciones" }
-        ],
+        submenu: [{ path: "/reposiciones", label: "Ver Reposiciones" }],
       },
       { path: "/productos", label: "Productos" }
     );
@@ -75,10 +65,7 @@ const Sidebar = () => {
     menuOpciones.push(
       {
         label: "Reposiciones",
-        submenu: [
-          { path: "/reposiciones", label: "Ver Reposiciones" },
-          // { path: "/ultimas-reposiciones", label: "Últimas Reposiciones" }
-        ],
+        submenu: [{ path: "/reposiciones", label: "Ver Reposiciones" }],
       },
       { path: "/productos", label: "Productos" }
     );
@@ -86,6 +73,12 @@ const Sidebar = () => {
 
   return (
     <aside className="bg-gray-700 sm:w-1/3 xl:w-1/5 sm:min-h-screen p-5">
+      {/* Logo */}
+      <div className="flex justify-center items-center mb-5">
+        <img src={logo} alt="Lievito Logo" className="w-40 h-auto" />
+      </div>
+
+      {/* Menú */}
       <nav className="mt-5 list-none">
         {menuOpciones.map((opcion, index) =>
           opcion.submenu ? (
