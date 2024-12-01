@@ -73,12 +73,10 @@ const Sidebar = () => {
 
   return (
     <aside className="bg-gray-700 sm:w-1/3 xl:w-1/5 sm:min-h-screen p-5">
-      {/* Logo */}
       <div className="flex justify-center items-center mb-5">
         <img src={logo} alt="Lievito Logo" className="w-40 h-auto" />
       </div>
 
-      {/* Menú */}
       <nav className="mt-5 list-none">
         {menuOpciones.map((opcion, index) =>
           opcion.submenu ? (
