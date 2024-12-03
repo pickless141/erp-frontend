@@ -173,7 +173,7 @@ const Pedidos = () => {
                   IVA (10%): Gs. {pedido.IVA}
                 </Typography>
                 <Typography variant="caption" className="text-gray-600">
-                  Registrado por: {pedido.usuario.nombre} {pedido.usuario.apellido}
+                  Registrado por: {pedido.usuario?.nombre} {pedido.usuario?.apellido}
                 </Typography>
               </Box>
             </Box>
