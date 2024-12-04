@@ -18,7 +18,7 @@ import {
   DialogActions,
 } from "@mui/material";
 
-const PedidoForm = ({ open, onClose, tiendaId, onPedidoConfirmado }) => {
+const PedidoForm = ({ open, onClose, tiendaId }) => {
   const [tienda, setTienda] = useState({ nombreTienda: "", productos: [] });
   const [pedido, setPedido] = useState([]);
   const apiUrl = import.meta.env.VITE_API_SERVER;
@@ -98,7 +98,6 @@ const PedidoForm = ({ open, onClose, tiendaId, onPedidoConfirmado }) => {
         "El pedido ha sido confirmado con éxito.",
         "success"
       );
-      onPedidoConfirmado(); // Callback para recargar datos o cerrar el diálogo desde el componente padre
       onClose(); 
     } catch (error) {
       Swal.fire("Error", error.message, "error");
