@@ -1,20 +1,51 @@
-import React, { useState } from 'react';
-import Layout from '../../components/Layout';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+} from "@mui/material";
+import Swal from "sweetalert2";
 
-const NuevaProduccion = () => {
-  const navigate = useNavigate();
+const NuevaProduccion = ({ open, onClose, onProduccionCreated, currentPage, currentLimit }) => {
+  const [productos, setProductos] = useState([]);
   const [produccion, setProduccion] = useState({
-    nombreProducto: '',
-    cantidadProducida: '',
-    numeroLote: '',
-    fechaVencimiento: '',
+    productoId: "",
+    cantidadProducida: "",
+    numeroLote: "",
+    fechaVencimiento: "",
   });
 
-  const [exito, setExito] = useState(null);
-  const [error, setError] = useState(null);
+  const apiUrl = import.meta.env.VITE_API_SERVER;
+  const token = localStorage.getItem("token");
 
-  
+  useEffect(() => {
+    if (open) {
+      const fetchProductos = async () => {
+        try {
+          const response = await fetch(`${apiUrl}/productos`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "x-auth-token": token,
+            },
+          });
+          const data = await response.json();
+          setProductos(data);
+        } catch (error) {
+          console.error("Error al obtener los productos:", error);
+        }
+      };
+      fetchProductos();
+    }
+  }, [open, apiUrl, token]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProduccion({ ...produccion, [name]: value });
@@ -22,118 +53,101 @@ const NuevaProduccion = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const apiUrl = import.meta.env.VITE_API_SERVER;
-      const token = localStorage.getItem('token');
       const response = await fetch(`${apiUrl}/producciones/`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token,
+          "Content-Type": "application/json",
+          "x-auth-token": token,
         },
         body: JSON.stringify(produccion),
       });
 
       if (response.ok) {
-        setExito('Producción registrada exitosamente');
-        setTimeout(() => {
-          navigate('/producciones');
-        }, 1000);
+        Swal.fire("Éxito", "Producción registrada exitosamente", "success");
+        onProduccionCreated(currentPage, currentLimit);
+        setProduccion({
+          productoId: "",
+          cantidadProducida: "",
+          numeroLote: "",
+          fechaVencimiento: "",
+        });
+        onClose();
       } else {
-        setError('Error al registrar la producción');
+        Swal.fire("Error", "Error al registrar la producción", "error");
       }
     } catch (error) {
-      console.error(error);
-      setError('Error al registrar la producción');
+      console.error("Error al guardar la producción:", error);
+      Swal.fire("Error", "Error al registrar la producción", "error");
     }
   };
 
   return (
-    <Layout>
-      <div className="max-w-md mx-auto">
-        <h1 className="text-2xl text-gray-800 font-light mb-4">Nueva Producción</h1>
-        {exito && (
-          <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
-            {exito}
-          </div>
-        )}
-        {error && (
-          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
-            {error}
-          </div>
-        )}
-        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="nombreProducto">
-              Nombre del Producto:
-            </label>
-            <input
-              type="text"
-              id="nombreProducto"
-              name="nombreProducto"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={handleInputChange}
-              value={produccion.nombreProducto}
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>Registrar Nueva Producción</DialogTitle>
+      <DialogContent>
+        <form onSubmit={handleSubmit}>
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="producto-select-label">Producto</InputLabel>
+            <Select
+              labelId="producto-select-label"
+              value={produccion.productoId}
+              onChange={(e) => handleInputChange({ target: { name: "productoId", value: e.target.value } })}
+              name="productoId"
               required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="cantidadProducida">
-              Cantidad Producida:
-            </label>
-            <input
-              type="number"
-              id="cantidadProducida"
-              name="cantidadProducida"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={handleInputChange}
-              value={produccion.cantidadProducida}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="cantidadProducida">
-              Numero de Lote:
-            </label>
-            <input
-              type="number"
-              id="numeroLote"
-              name="numeroLote"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={handleInputChange}
-              value={produccion.numeroLote}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="fechaVencimiento">
-              Fecha de Vencimiento:
-            </label>
-            <input
-              type="date"
-              id="fechaVencimiento"
-              name="fechaVencimiento"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={handleInputChange}
-              value={produccion.fechaVencimiento}
-              required
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <button
-              type="submit"
-              className="bg-blue-800 hover-bg-blue-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
+              <MenuItem value="">
+                <em>Seleccione un producto</em>
+              </MenuItem>
+              {productos.map((producto) => (
+                <MenuItem key={producto._id} value={producto._id}>
+                  {producto.nombreProducto}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            margin="normal"
+            label="Cantidad Producida"
+            name="cantidadProducida"
+            type="number"
+            fullWidth
+            value={produccion.cantidadProducida}
+            onChange={handleInputChange}
+            required
+          />
+          <TextField
+            margin="normal"
+            label="Número de Lote"
+            name="numeroLote"
+            type="number"
+            fullWidth
+            value={produccion.numeroLote}
+            onChange={handleInputChange}
+            required
+          />
+          <TextField
+            margin="normal"
+            label="Fecha de Vencimiento"
+            name="fechaVencimiento"
+            type="date"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            value={produccion.fechaVencimiento}
+            onChange={handleInputChange}
+            required
+          />
+          <DialogActions>
+            <Button onClick={onClose} color="secondary">
+              Cancelar
+            </Button>
+            <Button type="submit" color="primary">
               Registrar
-            </button>
-            <Link to="/producciones" className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-              Volver
-            </Link>
-          </div>
+            </Button>
+          </DialogActions>
         </form>
-      </div>
-    </Layout>
+      </DialogContent>
+    </Dialog>
   );
 };
 

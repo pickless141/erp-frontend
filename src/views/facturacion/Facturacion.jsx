@@ -1,11 +1,13 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Add } from "@mui/icons-material"; 
 import Layout from "../../components/Layout";
 import FacturaNotificacion from "../../components/FacturaNotificacion";
-import Facturaslist from "./FacturasList";
+import FacturasList from "./FacturasList";
 import CrearFacturaModal from "./CrearFacturaModal";
+import { useFacturasStore } from "../../store";
+import { useState } from "react";
 
 function Facturacion() {
+  const { fetchFacturas } = useFacturasStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -13,24 +15,25 @@ function Facturacion() {
       <div>
         <h1 className="text-2xl text-gray-800 font-light mb-6">Facturas</h1>
 
-        <div className="flex justify-between items-center mb-4">
-          {/* Botón Agregar */}
-          <Link
-            to="#"
-            onClick={() => setIsModalOpen(true)}
-            className="bg-blue-800 py-2 px-5 text-white rounded text-sm hover:bg-gray-800 uppercase font-bold w-full lg:w-auto text-center"
-          >
-            Agregar
-          </Link>
-
+        <div className="flex justify-between items-center mb-6 gap-4">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-md w-12 h-12 shadow-md focus:outline-none"
+            >
+              <Add fontSize="large" />
+            </button>
+          </div>
           <FacturaNotificacion />
         </div>
 
-        {/* Lista de facturas */}
-        <Facturaslist />
+        <FacturasList />
 
-        {/* Modal para crear facturas */}
-        <CrearFacturaModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />
+        <CrearFacturaModal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          refreshFacturas={fetchFacturas}
+        />
       </div>
     </Layout>
   );

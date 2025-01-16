@@ -2,7 +2,7 @@ import { create } from "zustand";
 import axios from "axios";
 
 const useProductosStore = create((set) => ({
-  productos: [],
+  productos: [],  
   fetchProductos: async () => {
     const apiUrl = import.meta.env.VITE_API_SERVER;
     const token = localStorage.getItem("token");
@@ -17,6 +17,5 @@ const useProductosStore = create((set) => ({
     }
   },
 }));
-
 
 export default useProductosStore;

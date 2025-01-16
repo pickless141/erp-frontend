@@ -3,18 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import Layout from "../../components/Layout";
 import Pagination from "../../components/Pagination";
 import Swal from "sweetalert2";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Typography,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Close } from "@mui/icons-material";
+import DialogoDetalles from "../../components/DialogoDetalles";
 
 const ReposicionesTienda = () => {
   const { tiendaId } = useParams();
@@ -157,70 +147,12 @@ const ReposicionesTienda = () => {
           limit={reposiciones.limit}
         />
 
-        <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
-          <DialogTitle>
-            Detalle de la Reposición
-            <Tooltip title="Cerrar" arrow>
-              <IconButton
-                onClick={handleCloseDialog}
-                sx={{ position: "absolute", right: 8, top: 8 }}
-                aria-label="Cerrar"
-              >
-                <Close />
-              </IconButton>
-            </Tooltip>
-          </DialogTitle>
-          <DialogContent>
-            {detalleReposicion ? (
-              <div className="overflow-x-auto">
-                <table className="min-w-full bg-white border border-gray-300 divide-y divide-gray-300">
-                  <thead className="bg-gray-800 text-white">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                        Producto
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                        Cantidad Exhibida
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                        Depósito
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                        Sugerido
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                        Vencidos
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-300">
-                    {detalleReposicion.map((producto) => (
-                      <tr key={producto._id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {producto.producto?.nombreProducto}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {producto.cantidadExhibida}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {producto.deposito}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {producto.sugerido}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {producto.vencidos}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <Typography>Cargando detalles...</Typography>
-            )}
-          </DialogContent>
-        </Dialog>
+        <DialogoDetalles
+          open={openDialog}
+          onClose={handleCloseDialog}
+          titulo="Detalle de la Reposición"
+          detalleReposicion={detalleReposicion}
+        />
       </div>
     </Layout>
   );

@@ -14,9 +14,10 @@ const Estadisticas = () => {
   return (
     
     <Layout>
+      <h1 className="text-2xl text-gray-800 font-light mb-2">Estadisticas</h1>
+      <span className='text-xl font-light mb-2'>Selecciona una estadistica</span>
+
       <div className="max-w-4xl mx-auto py-8">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Selecciona una Estadística</h2>
-        
         <Grid container spacing={4} justifyContent="center">
           {estadisticasItems.map((item) => (
             <Grid item xs={12} sm={6} md={4} key={item.label}>

@@ -29,9 +29,13 @@ const Sidebar = () => {
       { path: "/home", label: "Clientes" },
       { path: "/tiendas", label: "Tiendas" },
       { path: "/pedidos", label: "Pedidos" },
+      // { path: "/facturacion", label: "Facturacion" },
       {
         label: "Reposiciones",
-        submenu: [{ path: "/reposiciones", label: "Ver Reposiciones" }],
+        submenu: [
+          { path: "/reposiciones", label: "Ver Reposiciones" },
+          {path: "/ultimas-reposiciones", label: "Ultimas Reposiciones"}
+        ],
       },
       { path: "/productos", label: "Productos" },
       { path: "/estadisticas", label: "Estadísticas" },
@@ -55,7 +59,10 @@ const Sidebar = () => {
     menuOpciones.push(
       {
         label: "Reposiciones",
-        submenu: [{ path: "/reposiciones", label: "Ver Reposiciones" }],
+        submenu: [
+          { path: "/reposiciones", label: "Ver Reposiciones" },
+          { path: "/ultimas-reposiciones", label: "Ultimsas Reposiciones" },
+        ],
       },
       { path: "/productos", label: "Productos" }
     );
@@ -65,10 +72,21 @@ const Sidebar = () => {
     menuOpciones.push(
       {
         label: "Reposiciones",
-        submenu: [{ path: "/reposiciones", label: "Ver Reposiciones" }],
+        submenu: [
+          { path: "/reposiciones", label: "Ver Reposiciones" },
+          { path: "/ultimas-reposiciones", label: "Ultimsas Reposiciones" },
+        ],
       },
       { path: "/productos", label: "Productos" }
     );
+  }
+
+  if(roles.includes("produccion")) {
+    menuOpciones.push(
+      { path: "/producciones", label: "Producción"},
+      // { path: "/productos", label: "Productos"},
+      {path: "/insumos", label: "Insumos"}
+    )
   }
 
   return (

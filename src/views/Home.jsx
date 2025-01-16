@@ -4,10 +4,11 @@ import Layout from "../components/Layout";
 import Pagination from "../components/Pagination";
 import ClienteTiendaDetail from "./clientes/ClienteTiendaDetail";
 import EditarCliente from "./clientes/EditarCliente";
-import NuevoCliente from "./clientes/NuevoCliente"; 
+import NuevoCliente from "./clientes/NuevoCliente";
 import { useClientesStore, useGeneralStore } from "../store/index";
 import Swal from "sweetalert2";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import { Add } from "@mui/icons-material";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -17,8 +18,15 @@ const Home = () => {
     fetchClientes: state.fetchClientes,
   }));
 
-  
-  const { eliminarItem, searchTerm, setSearchTerm, currentPage, setCurrentPage, resetCurrentPage, resetSearchTerm } = useGeneralStore((state) => ({
+  const {
+    eliminarItem,
+    searchTerm,
+    setSearchTerm,
+    currentPage,
+    setCurrentPage,
+    resetCurrentPage,
+    resetSearchTerm,
+  } = useGeneralStore((state) => ({
     eliminarItem: state.eliminarItem,
     searchTerm: state.searchTerm,
     setSearchTerm: state.setSearchTerm,
@@ -30,7 +38,7 @@ const Home = () => {
 
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
   const [clienteEditarId, setClienteEditarId] = useState(null);
-  const [isNuevoClienteModalOpen, setIsNuevoClienteModalOpen] = useState(false); // Estado para el modal
+  const [isNuevoClienteModalOpen, setIsNuevoClienteModalOpen] = useState(false); 
 
   useEffect(() => {
     resetCurrentPage();
@@ -97,20 +105,23 @@ const Home = () => {
   return (
     <Layout>
       <h1 className="text-2xl text-gray-800 font-light mb-6">Clientes</h1>
-      <div className="flex flex-col md:flex-row justify-between mb-6">
-        <button
-          onClick={() => setIsNuevoClienteModalOpen(true)} 
-          className="bg-blue-800 py-2 px-5 inline-block text-white rounded text-sm hover:bg-gray-800 mb-3 uppercase font-bold w-full md:w-auto text-center md:mr-3 transition-colors duration-300"
-        >
-          Nuevo Cliente
-        </button>
-        <input
-          type="text"
-          placeholder="Buscar por nombre de cliente"
-          value={searchTerm}
-          onChange={(e) => handleSearch(e.target.value)}
-          className="block w-full py-2 px-3 border rounded shadow-sm mb-3 md:mb-0"
-        />
+
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <div className="flex items-center gap-4 w-full">
+          <button
+            onClick={() => setIsNuevoClienteModalOpen(true)}
+            className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-md w-12 h-12 shadow-md focus:outline-none"
+          >
+            <Add fontSize="large" />
+          </button>
+          <input
+            type="text"
+            placeholder="Buscar cliente por nombre"
+            value={searchTerm}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="block w-full md:w-3/4 lg:w-2/3 py-2 px-4 border border-gray-300 rounded shadow-sm focus:ring focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -148,7 +159,7 @@ const Home = () => {
                     </button>
                     <button
                       onClick={() => confirmarEliminarCliente(cliente._id)}
-                      className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200"
+                      className="text-gray-700 hover:text-red-600 hover:underline transition-colors duration-200"
                     >
                       <FaTrash size={20} />
                     </button>
@@ -170,7 +181,7 @@ const Home = () => {
 
       {clienteSeleccionado && <ClienteTiendaDetail clienteId={clienteSeleccionado} />}
       {clienteEditarId && <EditarCliente clienteId={clienteEditarId} />}
-      <NuevoCliente open={isNuevoClienteModalOpen} onClose={() => setIsNuevoClienteModalOpen(false)} /> {/* Modal de NuevoCliente */}
+      <NuevoCliente open={isNuevoClienteModalOpen} onClose={() => setIsNuevoClienteModalOpen(false)} />
     </Layout>
   );
 };

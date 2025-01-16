@@ -8,7 +8,7 @@ import { useTiendasStore } from "../../store";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-const CrearFacturaModal = ({ open, onClose }) => {
+const CrearFacturaModal = ({ open, onClose, refreshFacturas }) => {
   const { tiendaSelect, fetchTiendaSelect } = useTiendasStore();
   const [tienda, setTienda] = useState(null);
   const [cliente, setCliente] = useState({ nombre: "", ruc: "" });
@@ -79,6 +79,7 @@ const CrearFacturaModal = ({ open, onClose }) => {
       );
 
       Swal.fire("Éxito", "La factura ha sido registrada exitosamente", "success");
+      refreshFacturas()
       onClose();
     } catch (error) {
       console.error("Error al registrar la factura:", error);

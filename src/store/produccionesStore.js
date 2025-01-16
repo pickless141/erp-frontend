@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 const useProduccionesStore = create((set) => ({
   producciones: { docs: [], totalDocs: 0, limit: 10 },
-  fetchProducciones: async (page = 1) => {
+  fetchProducciones: async (page = 1, limit = 10) => {
     const apiUrl = import.meta.env.VITE_API_SERVER;
     const token = localStorage.getItem("token");
 
@@ -16,9 +16,9 @@ const useProduccionesStore = create((set) => ({
       const data = await response.json();
       set({
         producciones: {
-          docs: data.producciones,
-          totalDocs: data.totalProducciones,
-          limit: 10,
+          docs: data.docs,
+          totalDocs: data.totalDocs,
+          limit: data.limit,
         },
       });
     } catch (error) {

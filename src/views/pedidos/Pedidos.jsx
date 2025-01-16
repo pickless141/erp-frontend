@@ -6,6 +6,7 @@ import ResumenPedidoModal from "./ResumenPedidoModal";
 import EditarPedido from "./EditarPedido";
 import Pagination from "../../components/Pagination";
 import { usePedidosStore, useGeneralStore } from "../../store/index";
+import { getShadowStyle } from "../../utils/getShadowStyle";
 import {
   Box,
   Typography,
@@ -39,8 +40,6 @@ const Pedidos = () => {
 
   const { docs, totalDocs, limit } = pedidos;
   const totalPages = Math.ceil(totalDocs / limit);
-
-  
 
   useEffect(() => {
     resetCurrentPage();
@@ -113,9 +112,7 @@ const Pedidos = () => {
 
   return (
     <Layout>
-      <Typography variant="h5" className="text-gray-800 font-light mb-6">
-        Pedidos
-      </Typography>
+      <h1 className="text-2xl text-gray-800 font-light mb-6">Pedidos</h1>
 
       <Box className="flex justify-between items-center mb-6">
         <Button
@@ -129,7 +126,14 @@ const Pedidos = () => {
       </Box>
 
       {docs.map((pedido) => (
-        <Card key={pedido._id} className="border-t-4 mt-4 shadow-lg">
+         <Card
+         key={pedido._id}
+         sx={{
+           borderRadius: "8px",
+           marginTop: "1rem",
+           boxShadow: getShadowStyle(pedido.estado),
+         }}
+       >
           <CardContent>
             <Box className="flex justify-between items-start">
               <Box>
@@ -153,7 +157,7 @@ const Pedidos = () => {
                   value={pedido.estado}
                   onChange={(e) => cambiarEstadoPedido(pedido._id, e.target.value)}
                   size="small"
-                  sx={{ mt: 1, textTransform: "uppercase" }}
+                  sx={{ m: 1, textTransform: "uppercase" }}
                 >
                   <MenuItem value="COMPLETADO">COMPLETADO</MenuItem>
                   <MenuItem value="SUGERIDO">SUGERIDO</MenuItem>

@@ -31,7 +31,7 @@ const Login = () => {
   
       if (response.status === 200) {
         const data = await response.json();
-        const { token, nombre, apellido, roles } = data;
+        const { token, nombre, apellido, roles, empresa } = data;
   
         if (!roles || !Array.isArray(roles)) {
           console.error('Error: roles no definido o no es un array.');
@@ -42,6 +42,7 @@ const Login = () => {
         localStorage.setItem('nombre', nombre);
         localStorage.setItem('apellido', apellido);
         localStorage.setItem('roles', JSON.stringify(roles));
+        localStorage.setItem('empresa', empresa);
         
         if (roles.includes('admin')) {
           window.location.href = '/home';
@@ -49,6 +50,8 @@ const Login = () => {
           window.location.href = '/pedidos';
         } else if (roles.includes('repositor')) {
           window.location.href = '/reposiciones';
+        } else if (roles.includes('produccion')) {
+          window.location.href = 'producciones'
         } else if (roles.includes('tercerizado')) {
           window.location.href = '/reposiciones';
         } else {

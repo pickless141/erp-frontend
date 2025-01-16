@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import { Add } from "@mui/icons-material";
 import { useInsumosStore, useGeneralStore } from '../../store/index';
 import Layout from '../../components/Layout';
 import Pagination from '../../components/Pagination';
 import EditarInsumo from './EditarInsumo';
+import Tooltip from '@mui/material/Tooltip'; 
 
 const Insumos = () => {
   const navigate = useNavigate();
@@ -15,7 +17,15 @@ const Insumos = () => {
     fetchInsumos: state.fetchInsumos,
   }));
 
-  const { eliminarItem, searchTerm, currentPage, setSearchTerm, setCurrentPage, resetCurrentPage, resetSearchTerm } = useGeneralStore((state) => ({
+  const {
+    eliminarItem,
+    searchTerm,
+    currentPage,
+    setSearchTerm,
+    setCurrentPage,
+    resetCurrentPage,
+    resetSearchTerm,
+  } = useGeneralStore((state) => ({
     eliminarItem: state.eliminarItem,
     searchTerm: state.searchTerm,
     currentPage: state.currentPage,
@@ -24,14 +34,13 @@ const Insumos = () => {
     resetCurrentPage: state.resetCurrentPage,
     resetSearchTerm: state.resetSearchTerm,
   }));
-  
 
   const [insumoEditarId, setInsumoEditarId] = useState(null);
 
   useEffect(() => {
     resetCurrentPage();
     resetSearchTerm();
-    fetchInsumos(1, ""); 
+    fetchInsumos(1, "");
   }, [fetchInsumos, resetCurrentPage, resetSearchTerm]);
 
   const confirmarEliminarInsumo = (insumoId) => {
@@ -78,20 +87,26 @@ const Insumos = () => {
   return (
     <Layout>
       <h1 className="text-2xl text-gray-800 font-light mb-6">Insumos</h1>
-      <div className="flex flex-col md:flex-row justify-between mb-6">
-        <Link
-          to="/nuevoinsumo"
-          className="bg-blue-800 py-2 px-5 inline-block text-white rounded text-sm hover:bg-gray-800 mb-3 md:mb-0 uppercase font-bold w-full md:w-auto text-center md:mr-3 transition-colors duration-300"
-        >
-          Nuevo Insumo
-        </Link>
-        <input
-          type="text"
-          placeholder="Buscar por nombre de insumo"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          className="block w-full py-2 px-3 border rounded shadow-sm mb-3 md:mb-0"
-        />
+
+      {/* Botón de agregar y barra de búsqueda */}
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <div className="flex items-center gap-4 w-full">
+          <Tooltip title="Agregar insumo" arrow>
+            <button
+              onClick={() => navigate("/nuevoinsumo")}
+              className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-md w-12 h-12 shadow-md focus:outline-none"
+            >
+              <Add fontSize="large" />
+            </button>
+          </Tooltip>
+          <input
+            type="text"
+            placeholder="Buscar insumo por nombre"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="block w-full md:w-3/4 lg:w-2/3 py-2 px-4 border border-gray-300 rounded shadow-sm focus:ring focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -112,18 +127,22 @@ const Insumos = () => {
                 <td className="border px-4 py-2 text-center">{insumo.descripcion}</td>
                 <td className="border px-4 py-2 text-center">
                   <div className="flex justify-center items-center space-x-2">
-                    <button
-                      onClick={() => handleEditarInsumoClick(insumo._id)}
-                      className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200"
-                    >
-                      <FaEdit size={20} />
-                    </button>
-                    <button
-                      onClick={() => confirmarEliminarInsumo(insumo._id)}
-                      className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200"
-                    >
-                      <FaTrash size={20} />
-                    </button>
+                    <Tooltip title="Editar insumo" arrow>
+                      <button
+                        onClick={() => handleEditarInsumoClick(insumo._id)}
+                        className="text-gray-700 hover:text-blue-600 transition-colors duration-200"
+                      >
+                        <FaEdit size={20} />
+                      </button>
+                    </Tooltip>
+                    <Tooltip title="Eliminar insumo" arrow>
+                      <button
+                        onClick={() => confirmarEliminarInsumo(insumo._id)}
+                        className="text-gray-700 hover:text-red-700 transition duration-300"
+                      >
+                        <FaTrash size={20} />
+                      </button>
+                    </Tooltip>
                   </div>
                 </td>
               </tr>

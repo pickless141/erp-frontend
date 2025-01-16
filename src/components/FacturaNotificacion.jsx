@@ -35,7 +35,6 @@ function FacturaNotificacion() {
         </Badge>
       </IconButton>
 
-      {/* Modal con notificaciones */}
       <Dialog open={isModalOpen} onClose={handleCloseModal} maxWidth="sm" fullWidth>
         <DialogTitle>Notificaciones de Facturas Vencidas</DialogTitle>
         <DialogContent dividers>

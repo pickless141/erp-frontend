@@ -5,14 +5,13 @@ import Layout from "../../components/Layout";
 import Pagination from "../../components/Pagination";
 import NuevaTienda from "./NuevaTienda";
 import DetalleTienda from "./DetalleTienda";
-import EditarTienda from "./EditarTienda"; 
+import EditarTienda from "./EditarTienda";
 import PedidoForm from "./PedidoForm";
 import { useTiendasStore, useGeneralStore } from "../../store/index";
 import { FaEdit, FaTrash, FaShoppingCart } from "react-icons/fa";
+import { Add } from "@mui/icons-material";
 
 const Tiendas = () => {
-  const navigate = useNavigate();
-
   const {
     eliminarItem,
     searchTerm,
@@ -41,8 +40,10 @@ const Tiendas = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTiendaId, setSelectedTiendaId] = useState(null);
   const [isDetalleOpen, setIsDetalleOpen] = useState(false);
-  const [isEditarOpen, setIsEditarOpen] = useState(false); 
+  const [isEditarOpen, setIsEditarOpen] = useState(false);
   const [isPedidoOpen, setIsPedidoOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     resetCurrentPage();
@@ -54,7 +55,7 @@ const Tiendas = () => {
     (tiendaId) => {
       Swal.fire({
         title: "¿Estás seguro?",
-        text: "Esta acción no se puede revertir. ¿Deseas eliminar la tienda?",
+        text: "No podrás deshacer esta acción. ¿Deseas eliminar la tienda?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -77,10 +78,6 @@ const Tiendas = () => {
     },
     [eliminarItem, fetchTiendas, currentPage, searchTerm]
   );
-
-  const handlePedidoClick = (tiendaId) => {
-    navigate(`/hacerpedido/${tiendaId}`);
-  };
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -110,21 +107,20 @@ const Tiendas = () => {
   };
 
   const openEditarTiendaModal = (tiendaId) => {
-    setSelectedTiendaId(tiendaId); 
+    setSelectedTiendaId(tiendaId);
     setIsEditarOpen(true);
   };
 
   const closeEditarTiendaModal = () => {
-    setSelectedTiendaId(null); 
-    setIsEditarOpen(false); 
-    fetchTiendas(currentPage, searchTerm); 
+    setSelectedTiendaId(null);
+    setIsEditarOpen(false);
+    fetchTiendas(currentPage, searchTerm);
   };
 
   const openPedidoDialog = (tiendaId) => {
     setSelectedTiendaId(tiendaId);
     setIsPedidoOpen(true);
   };
-  
 
   const closePedidoDialog = () => {
     setIsPedidoOpen(false);
@@ -134,20 +130,23 @@ const Tiendas = () => {
   return (
     <Layout>
       <h1 className="text-2xl text-gray-800 font-light mb-6">Administrar Tiendas</h1>
-      <div className="flex flex-col md:flex-row justify-between mb-6">
-        <button
-          onClick={openNuevaTiendaModal}
-          className="bg-blue-800 py-2 px-5 inline-block text-white rounded text-sm hover:bg-gray-800 mb-3 uppercase font-bold w-full md:w-auto text-center md:mr-3"
-        >
-          Nueva Tienda
-        </button>
-        <input
-          type="text"
-          placeholder="Buscar por nombre de tienda"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          className="block w-full py-2 px-3 border rounded shadow-sm mb-3 md:mb-0"
-        />
+
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <div className="flex items-center gap-4 w-full">
+          <button
+            onClick={openNuevaTiendaModal}
+            className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-md w-12 h-12 shadow-md focus:outline-none"
+          >
+            <Add fontSize="large" />
+          </button>
+          <input
+            type="text"
+            placeholder="Buscar tienda por nombre"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="block w-full md:w-3/4 lg:w-2/3 py-2 px-4 border border-gray-300 rounded shadow-sm focus:ring focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -193,19 +192,19 @@ const Tiendas = () => {
                   <div className="flex justify-center items-center space-x-2">
                     <button
                       onClick={() => openEditarTiendaModal(tienda._id)}
-                      className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200"
+                      className="text-gray-700 hover:text-blue-600 transition-colors duration-200"
                     >
                       <FaEdit size={20} />
                     </button>
                     <button
                       onClick={() => confirmarEliminarTienda(tienda._id)}
-                      className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200"
+                      className="text-gray-700 hover:text-red-700 transition-colors duration-200"
                     >
                       <FaTrash size={20} />
                     </button>
                     <button
                       onClick={() => openPedidoDialog(tienda._id)}
-                      className="text-gray-700 hover:text-blue-600 hover:underline transition-colors duration-200"
+                      className="text-gray-700 hover:text-blue-600 transition-colors duration-200"
                     >
                       <FaShoppingCart size={20} />
                     </button>

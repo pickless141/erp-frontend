@@ -180,7 +180,7 @@ function App() {
         <Route
           path="/ultimas-reposiciones"
           element={
-            <ProtectedRoute allowedRoles={[]}>
+            <ProtectedRoute allowedRoles={['admin', 'vendedor','tercerizado']}>
               <UltimasReposiciones/>
             </ProtectedRoute>
           }
@@ -189,7 +189,7 @@ function App() {
         <Route
           path="/productos"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'vendedor', 'repositor', 'tercerizado']}>
+            <ProtectedRoute allowedRoles={['admin', 'vendedor', 'repositor', 'tercerizado',]}>
               <Productos />
             </ProtectedRoute>
           }
@@ -255,7 +255,7 @@ function App() {
         <Route
           path="/facturacion"
           element={
-            <ProtectedRoute allowedRoles={['admin']}>
+            <ProtectedRoute allowedRoles={[]}>
               <Facturacion />
             </ProtectedRoute>
           }
@@ -264,7 +264,7 @@ function App() {
         <Route
           path="/producciones"
           element={
-            <ProtectedRoute allowedRoles={['admin']}>
+            <ProtectedRoute allowedRoles={['admin', 'produccion']}>
               <Producciones />
             </ProtectedRoute>
           }
@@ -272,7 +272,7 @@ function App() {
         <Route
           path="/nuevaproduccion"
           element={
-            <ProtectedRoute allowedRoles={['admin']}>
+            <ProtectedRoute allowedRoles={['admin', 'produccion']}>
               <NuevaProduccion />
             </ProtectedRoute>
           }
@@ -281,7 +281,7 @@ function App() {
         <Route
           path="/insumos"
           element={
-            <ProtectedRoute allowedRoles={['admin']}>
+            <ProtectedRoute allowedRoles={['admin', 'produccion']}>
               <Insumos />
             </ProtectedRoute>
           }
@@ -289,7 +289,7 @@ function App() {
         <Route
           path="/nuevoinsumo"
           element={
-            <ProtectedRoute allowedRoles={['admin']}>
+            <ProtectedRoute allowedRoles={['admin', 'produccion']}>
               <NuevoInsumo />
             </ProtectedRoute>
           }
@@ -297,7 +297,7 @@ function App() {
         <Route
           path="/editarinsumo/:insumoId"
           element={
-            <ProtectedRoute allowedRoles={['admin']}>
+            <ProtectedRoute allowedRoles={['admin', 'produccion']}>
               <EditarInsumo />
             </ProtectedRoute>
           }

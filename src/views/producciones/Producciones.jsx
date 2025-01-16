@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { FaTrash } from 'react-icons/fa';
+import { Add } from '@mui/icons-material';
 import Layout from '../../components/Layout';
 import Pagination from '../../components/Pagination';
-import { Link } from 'react-router-dom';
+import Tooltip from '@mui/material/Tooltip';
+import NuevaProduccion from './NuevaProduccion'; 
 import { useProduccionesStore, useGeneralStore } from '../../store/index';
 
 function Producciones() {
-  const { producciones, fetchProducciones } = useProduccionesStore((state) => ({
+  const { producciones, totalDocs, limit, fetchProducciones } = useProduccionesStore((state) => ({
     producciones: state.producciones.docs,
     totalDocs: state.producciones.totalDocs,
     limit: state.producciones.limit,
@@ -21,13 +23,19 @@ function Producciones() {
     resetCurrentPage: state.resetCurrentPage,
   }));
 
-  
-  const totalPages = Math.ceil(producciones.totalDocs / producciones.limit);
+  const [currentLimit, setCurrentLimit] = useState(limit || 5);
+  const [openDialog, setOpenDialog] = useState(false); 
+
+  const totalPages = Math.ceil(totalDocs / currentLimit) || 1;
 
   useEffect(() => {
-    resetCurrentPage(); 
-    fetchProducciones(1); 
-  }, [fetchProducciones, resetCurrentPage]);
+    resetCurrentPage();
+    fetchProducciones(1, currentLimit);
+  }, [fetchProducciones, resetCurrentPage, currentLimit]);
+
+  useEffect(() => {
+    console.log(producciones); 
+  }, [producciones]);
 
   const confirmarEliminarProduccion = (produccionId) => {
     Swal.fire({
@@ -43,7 +51,7 @@ function Producciones() {
       if (result.isConfirmed) {
         eliminarItem('producciones', produccionId, {
           onSuccess: () => {
-            fetchProducciones(currentPage);
+            fetchProducciones(currentPage, currentLimit);
             Swal.fire('Eliminado!', 'La producción ha sido eliminada.', 'success');
           },
           onError: () => {
@@ -54,17 +62,47 @@ function Producciones() {
     });
   };
 
+  // const handleLimitChange = (e) => {
+  //   const newLimit = parseInt(e.target.value, 10);
+  //   setCurrentLimit(newLimit);
+  // };
+
   return (
     <Layout>
       <h1 className="text-2xl text-gray-800 font-light mb-6">Producciones</h1>
-      <div className="flex flex-col md:flex-row justify-between mb-6">
-        <Link
-          to="/nuevaproduccion"
-          className="bg-blue-800 py-2 px-5 inline-block text-white rounded text-sm hover:bg-gray-800 mb-3 md:mb-0 uppercase font-bold w-full md:w-auto text-center md:mr-3 transition-colors duration-300"
-        >
-          Agregar
-        </Link>
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <div className="flex items-center gap-4 w-full">
+          <Tooltip title="Agregar Producción" arrow>
+            <button
+              onClick={() => setOpenDialog(true)}
+              className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-md w-12 h-12 shadow-md focus:outline-none"
+            >
+              <Add fontSize="large" />
+            </button>
+          </Tooltip>
+        </div>
+        {/* <div className="flex items-center gap-2">
+          <label className="text-xs">Registros por página:</label>
+          <select
+            value={currentLimit}
+            onChange={handleLimitChange}
+            className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none"
+          >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={15}>15</option>
+            <option value={20}>20</option>
+          </select>
+        </div> */}
       </div>
+
+      <NuevaProduccion
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        onProduccionCreated={fetchProducciones}
+        currentPage={currentPage}
+        currentLimit={currentLimit}
+      />
 
       <div className="overflow-x-auto">
         <table className="min-w-full table-auto shadow-md w-full">
@@ -109,10 +147,10 @@ function Producciones() {
         pageCount={totalPages}
         onPageChange={(page) => {
           setCurrentPage(page);
-          fetchProducciones(page);
+          fetchProducciones(page, currentLimit);
         }}
-        totalDocs={producciones.totalDocs}
-        limit={producciones.limit}
+        totalDocs={totalDocs}
+        limit={currentLimit}
       />
     </Layout>
   );

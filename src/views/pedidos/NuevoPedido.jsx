@@ -70,7 +70,7 @@ const NuevoPedido = () => {
             await axios.post(`${apiUrl}/pedidos/vendedor`, {
                 tiendaId: tienda.value,
                 productos: pedidoProductos,
-                descripcion
+                descripcion,
             }, {
                 headers: {
                     'Content-Type': 'application/json',
