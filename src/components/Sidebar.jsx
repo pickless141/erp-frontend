@@ -34,7 +34,7 @@ const Sidebar = () => {
         label: "Reposiciones",
         submenu: [
           { path: "/reposiciones", label: "Ver Reposiciones" },
-          {path: "/ultimas-reposiciones", label: "Ultimas Reposiciones"}
+          // {path: "/ultimas-reposiciones", label: "Ultimas Reposiciones"}
         ],
       },
       { path: "/productos", label: "Productos" },
@@ -61,7 +61,7 @@ const Sidebar = () => {
         label: "Reposiciones",
         submenu: [
           { path: "/reposiciones", label: "Ver Reposiciones" },
-          { path: "/ultimas-reposiciones", label: "Ultimsas Reposiciones" },
+          // { path: "/ultimas-reposiciones", label: "Ultimsas Reposiciones" },
         ],
       },
       { path: "/productos", label: "Productos" }
@@ -74,7 +74,7 @@ const Sidebar = () => {
         label: "Reposiciones",
         submenu: [
           { path: "/reposiciones", label: "Ver Reposiciones" },
-          { path: "/ultimas-reposiciones", label: "Ultimsas Reposiciones" },
+          // { path: "/ultimas-reposiciones", label: "Ultimsas Reposiciones" },
         ],
       },
       { path: "/productos", label: "Productos" }
