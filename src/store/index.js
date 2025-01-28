@@ -8,4 +8,5 @@ export { default as useProduccionesStore } from "./produccionesStore";
 export { default as useInsumosStore } from "./insumosStore";
 export { default as useReposicionesStore } from "./reposicionesStore";
 export { default as useGeneralStore } from "./generalStore";
-export {default as useFacturasStore} from "./facturacionStore"
+export {default as useFacturasStore} from "./facturacionStore";
+export {default as useDepositoStore} from "./depositoStore";

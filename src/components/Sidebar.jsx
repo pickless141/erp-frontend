@@ -20,7 +20,11 @@ const getRolesFromStorage = () => {
 const Sidebar = () => {
   const location = useLocation();
   const roles = getRolesFromStorage();
-  const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
+  const [openSubmenu, setOpenSubmenu] = useState(null);
+
+  const handleSubmenu = (index) => {
+    setOpenSubmenu(openSubmenu === index ? null : index)
+  }
 
   const menuOpciones = [];
 
@@ -34,12 +38,18 @@ const Sidebar = () => {
         label: "Reposiciones",
         submenu: [
           { path: "/reposiciones", label: "Ver Reposiciones" },
-          // {path: "/ultimas-reposiciones", label: "Ultimas Reposiciones"}
+          {path: "/ultimas-reposiciones", label: "Ultimas Reposiciones"}
         ],
       },
       { path: "/productos", label: "Productos" },
       { path: "/estadisticas", label: "Estadísticas" },
-      { path: "/producciones", label: "Producción" },
+      {
+        label: "Produccion",
+        submenu: [
+          { path: "/producciones", label: "Producciones"},
+          { path: "/deposito", label: "Deposito en Fabrica"}
+        ]
+      },
       { path: "/insumos", label: "Insumos" }
     );
   }
@@ -100,17 +110,17 @@ const Sidebar = () => {
           opcion.submenu ? (
             <li key={index} className="p-2">
               <button
-                onClick={() => setIsSubmenuOpen(!isSubmenuOpen)}
+                onClick={() => handleSubmenu(index)} 
                 className="text-white text-lg flex justify-between w-full"
               >
                 {opcion.label}
-                {isSubmenuOpen ? (
+                {openSubmenu === index ? (
                   <ExpandLessIcon className="text-white" />
                 ) : (
                   <ExpandMoreIcon className="text-white" />
                 )}
               </button>
-              {isSubmenuOpen && (
+              {openSubmenu === index && (
                 <ul className="pl-4 mt-2">
                   {opcion.submenu.map((sub, subIndex) => (
                     <li
@@ -118,7 +128,7 @@ const Sidebar = () => {
                       className={
                         location.pathname === sub.path
                           ? "bg-blue-800 p-2 rounded"
-                          : "p-2 hover:bg-gray-600 rounded"
+                          : "p-2 hover:bg-gray-400 rounded"
                       }
                     >
                       <Link to={sub.path} className="text-white text-base block">
@@ -135,7 +145,7 @@ const Sidebar = () => {
               className={
                 location.pathname === opcion.path
                   ? "bg-blue-800 p-2 rounded"
-                  : "p-2 hover:bg-gray-600 rounded"
+                  : "p-2 hover:bg-gray-400 rounded"
               }
             >
               <Link to={opcion.path} className="text-white text-lg block">

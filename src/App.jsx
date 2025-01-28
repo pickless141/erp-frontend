@@ -35,6 +35,7 @@ import ProductosMasVendidos from './views/estadisticas/ProductoMasVendidos';
 import ProductosMasVendidosPorTienda from './views/estadisticas/ProductosMasVendidosPorTienda';
 import ProtectedRoute from './components/ProtectedRoute';
 import UltimasReposiciones from './views/reposiciones/UltimasReposiciones';
+import Deposito from './views/producciones/Deposito';
 
 function App() {
 
@@ -274,6 +275,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['admin', 'produccion']}>
               <NuevaProduccion />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/deposito"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'produccion']}>
+              <Deposito/>
             </ProtectedRoute>
           }
         />
