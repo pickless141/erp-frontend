@@ -96,7 +96,13 @@ const Sidebar = () => {
 
   if(roles.includes("produccion")) {
     menuOpciones.push(
-      { path: "/producciones", label: "Producción"},
+      {
+        label: "Produccion",
+        submenu: [
+          { path: "/producciones", label: "Producciones"},
+          { path: "/deposito", label: "Deposito en Fabrica"}
+        ]
+      },
       // { path: "/productos", label: "Productos"},
       {path: "/insumos", label: "Insumos"}
     )
