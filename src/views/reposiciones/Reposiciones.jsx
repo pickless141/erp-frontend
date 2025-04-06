@@ -166,6 +166,7 @@ const Reposiciones = () => {
               <th className="px-4 py-2">Fecha de Reposición</th>
               <th className="px-4 py-2">Categoría</th>
               <th className="px-4 py-2">Registrado por</th>
+              <th className="px-4 py-2">Comentario</th>
               <th className="px-4 py-2 text-center">Eliminar</th>
             </tr>
           </thead>
@@ -192,6 +193,10 @@ const Reposiciones = () => {
                   {reposicion.usuario
                     ? `${reposicion.usuario.nombre} ${reposicion.usuario.apellido}`
                     : "Desconocido"}
+                </td>
+                
+                <td className="border px-4 py-2">
+                  {reposicion.comentario || "No tiene"}
                 </td>
                 <td className="border px-4 py-2 text-center">
                   <button

@@ -25,6 +25,7 @@ const NuevoRegistro = () => {
   const [cantidadesDeposito, setCantidadesDeposito] = useState({});
   const [cantidadesSugeridas, setCantidadesSugeridas] = useState({});
   const [cantidadesVencidas, setCantidadesVencidas] = useState({});
+  const [comentario, setComentario] = useState("");
   const [exito, setExito] = useState(null);
   const [error, setError] = useState(null);
 
@@ -67,6 +68,7 @@ const NuevoRegistro = () => {
           vencidos: cantidadesVencidas[producto._id] || 0,
         })),
         categoria: categoria.value,
+        comentario,
       };
 
       await axios.post(`${apiUrl}/reposiciones/`, reposicionData, {
@@ -193,6 +195,16 @@ const NuevoRegistro = () => {
               </table>
             </div>
           )}
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Comentario</label>
+            <textarea
+              className="w-full px-3 py-2 border rounded"
+              rows="2"
+              value={comentario}
+              onChange={(e) => setComentario(e.target.value)}
+            ></textarea>
+          </div>
 
           <div className="flex items-center justify-center mt-4">
             <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
